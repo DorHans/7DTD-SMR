@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using SevenDaysSaveManipulator.PlayerData;
 
 namespace _7DTD_SingleMapRenderer.Core
 {
@@ -129,7 +130,7 @@ namespace _7DTD_SingleMapRenderer.Core
 
             if (String.IsNullOrEmpty(ttpFilename) || !File.Exists(ttpFilename))
                 return pois;
-            /*
+            
             try
             {
                 var playerfile = new PlayerDataFile(ttpFilename);
@@ -172,7 +173,7 @@ namespace _7DTD_SingleMapRenderer.Core
             {
                 ;
             } // erstmal alle Fehler ignorieren und Map trotzdem rendern, bis ich ein besseres Verfahren zur Fehlermeldung habe (Logging)
-            */
+            
             return pois;
         }
 

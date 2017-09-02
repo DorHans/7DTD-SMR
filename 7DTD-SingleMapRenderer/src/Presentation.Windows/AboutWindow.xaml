@@ -49,7 +49,8 @@
         </TextBlock>
         <TextBlock Grid.Row="5" Margin="5">
              <Run>7DTD-SingleMapRenderer uses code from:</Run><LineBreak/>
-            <Hyperlink NavigateUri="https://github.com/nicolas-f/7DTD-leaflet" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/nicolas-f/7DTD-leaflet</Hyperlink>
+            <Hyperlink NavigateUri="https://github.com/nicolas-f/7DTD-leaflet" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/nicolas-f/7DTD-leaflet</Hyperlink><LineBreak/>
+            <Hyperlink NavigateUri="https://github.com/Karlovsky120/7DaysProfileEditor/" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Karlovsky120/7DaysProfileEditor/</Hyperlink>
         </TextBlock>
         <Button Grid.Row="6" Content="Schließen" Margin="8,8" Height="23" Width="200" Name="btnClose" Click="btnClose_Click" IsDefault="True" />
     </Grid>

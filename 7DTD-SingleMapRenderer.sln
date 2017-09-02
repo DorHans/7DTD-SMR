@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7DTD-SingleMapRenderer", "7DTD-SingleMapRenderer\7DTD-SingleMapRenderer.csproj", "{93CBA772-BDC8-4DD1-ADA3-E1B1442FDE32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7DaysSaveManipulator", "externals\7DaysProfileEditor\7DaysSaveManipulator\7DaysSaveManipulator.csproj", "{5358C4CA-E436-44A3-A6EB-36D2732F439F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{93CBA772-BDC8-4DD1-ADA3-E1B1442FDE32}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93CBA772-BDC8-4DD1-ADA3-E1B1442FDE32}.Release|x64.ActiveCfg = Release|Any CPU
 		{93CBA772-BDC8-4DD1-ADA3-E1B1442FDE32}.Release|x64.Build.0 = Release|Any CPU
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Debug|x64.ActiveCfg = Debug|x64
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Debug|x64.Build.0 = Debug|x64
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Release|x64.ActiveCfg = Release|x64
+		{5358C4CA-E436-44A3-A6EB-36D2732F439F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
