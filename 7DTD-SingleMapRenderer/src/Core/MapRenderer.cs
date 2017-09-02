@@ -362,7 +362,8 @@ namespace _7DTD_SingleMapRenderer.Core
                     offsetY += tilegridsize;
                 }
                 int circleSize = 10;
-                g.DrawEllipse(pen, mitteX - circleSize / 2, mitteY - circleSize / 2, circleSize, circleSize);
+                var nullpunkt = new System.Drawing.Point((-minX + 1) * tileSize, (maxY + 2) * tileSize);
+                g.DrawEllipse(pen, nullpunkt.X - circleSize / 2, nullpunkt.Y - circleSize / 2, circleSize, circleSize);
             }
         }
 
