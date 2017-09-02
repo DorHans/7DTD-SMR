@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{93CBA772-BDC8-4DD1-ADA3-E1B1442FDE32}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>_7DTD_SingleMapRenderer</RootNamespace>
+    <AssemblyName>7DTD-SingleMapRenderer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\ico\guo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>_7DTD_SingleMapRenderer.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="src\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="src\CommandLine\OptionAttribute.cs" />
+    <Compile Include="src\Presentation.Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Presentation.Converters\AndBooleanConverter.cs" />
+    <Compile Include="src\CommandLine\CommandLine.cs" />
+    <Compile Include="src\Presentation.Converters\InverseBooleanConverter.cs" />
+    <Compile Include="src\Services\IProgressService.cs" />
+    <Compile Include="src\Core\MapDataStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Core\POI.cs" />
+    <Compile Include="src\Program.cs" />
+    <Compile Include="src\Settings\SaveGame.cs" />
+    <Compile Include="src\Settings\AppSettings.cs" />
+    <Compile Include="src\Presentation.Windows\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Util\ShellHelper.cs" />
+    <Compile Include="src\Core\TileSizes.cs" />
+    <Compile Include="src\Tools.FontTest\FontTestWindow.xaml.cs">
+      <DependentUpon>FontTestWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Tools.ItemAtlas\ItemAtlasSplitter.xaml.cs">
+      <DependentUpon>ItemAtlasSplitter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Tools.XmlConverter\XmlCsvConverterWindow.xaml.cs">
+      <DependentUpon>XmlCsvConverterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Tools.XmlConverter\XmlEntities.cs" />
+    <Page Include="src\Presentation.Windows\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="src\Presentation.Windows\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="src\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Presentation.Windows\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="src\Presentation.Windows\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Tools.FontTest\FontTestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Tools.ItemAtlas\ItemAtlasSplitter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Tools.XmlConverter\XmlCsvConverterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Core\MapRenderer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="..\LICENSE">
+      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ico\guo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\book.png" />
+    <Resource Include="Resources\png\chest.png" />
+    <Resource Include="Resources\png\drugs.png" />
+    <Resource Include="Resources\png\fire.png" />
+    <Resource Include="Resources\png\fork.png" />
+    <Resource Include="Resources\png\gun.png" />
+    <Resource Include="Resources\png\house.png" />
+    <Resource Include="Resources\png\medic.png" />
+    <Resource Include="Resources\png\radiation.png" />
+    <Resource Include="Resources\png\shield.png" />
+    <Resource Include="Resources\png\star.png" />
+    <Resource Include="Resources\png\tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\map_background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\hammer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\ui_game_symbol_map_cabin.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_campsite.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_cave.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_city.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_civil.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_fortress.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_house.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_town.png" />
+    <Resource Include="Resources\png\ui_game_symbol_map_trader.png" />
+    <Resource Include="Resources\png\ui_game_symbol_x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\dropped_backpack.png" />
+    <Resource Include="Resources\png\quickmarker.png" />
+    <Resource Include="Resources\png\spawnposition.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2015/7/12" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YearStamp.MonthAndDayStamp" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

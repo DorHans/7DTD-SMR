@@ -1,0 +1,56 @@
+﻿<Window x:Class="_7DTD_SingleMapRenderer.Presentation.Windows.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About ..." Height="375" Width="400" SizeToContent="WidthAndHeight"
+        MinHeight="200" MinWidth="375" MaxHeight="450" MaxWidth="600"
+        ResizeMode="CanResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="5" TextAlignment="Center" TextWrapping="Wrap">
+            <Run>A very simple SinglePlayer Map Renderer for 7 Days To Die.</Run><LineBreak/>
+            <Run>Visit</Run> <Hyperlink NavigateUri="http://7daystodie.com" RequestNavigate="Hyperlink_RequestNavigate">http://7daystodie.com</Hyperlink> <Run>for information about the game.</Run><LineBreak/>
+            <Run>Visit</Run> <Hyperlink NavigateUri="https://github.com/DorHans/7DTD-SMR" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/DorHans/7DTD-SMR</Hyperlink> <Run>for sources.</Run><LineBreak/>
+            <Run>Visit</Run> <Hyperlink NavigateUri="https://7daystodie.com/forums/showthread.php?30280-SinglePlayer-Map-Renderer" RequestNavigate="Hyperlink_RequestNavigate" ToolTip="https://7daystodie.com/forums/showthread.php?30280-SinglePlayer-Map-Renderer">https://7daystodie.com/forums/[...]</Hyperlink> <Run>for forum and discussion.</Run>
+        </TextBlock>
+        <TextBlock Grid.Row="1" Margin="5" TextWrapping="Wrap" FontWeight="Bold" Foreground="Red"
+                   Text="ANY USE OF THE SOFTWARE IS ENTIRELY AT YOUR OWN RISK." />
+        <TextBlock Grid.Row="2" Text="Versioninformation:" TextDecorations="Underline" Height="Auto" Margin="5,5,5,0" />
+        <DataGrid Grid.Row="3" x:Name="dgVersionInfo" Margin="5" Width="{Binding ElementName=txtLicense, Path=ActualWidth}"
+                  Background="Transparent" RowBackground="Transparent" ItemsSource="{Binding VersionInformations}" ClipboardCopyMode="IncludeHeader"
+                  CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" CanUserResizeRows="False" CanUserAddRows="True"
+                  AutoGenerateColumns="False" IsEnabled="True" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="None" ColumnWidth="Auto">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn CanUserReorder="False" Header="Filename" IsReadOnly="True" Binding="{Binding FileName}" Width="*" />
+                <DataGridTextColumn CanUserReorder="False" Header="Version" IsReadOnly="True" Binding="{Binding Version}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBlock Name="txtLicense" Grid.Row="4" Margin="5" FontFamily="Courier New">
+            <Run>-----------------------------------------------------</Run><LineBreak/>
+            <Run>GNU AFFERO GENERAL PUBLIC LICENSE</Run><LineBreak/>
+            <Run>Version 3, 19 November 2007</Run><LineBreak/>
+            <LineBreak/>
+            <Run>See LICENSE in application directory.</Run><LineBreak/>
+            <Run>-----------------------------------------------------</Run>
+        </TextBlock>
+        <TextBlock Grid.Row="5" Margin="5">
+             <Run>7DTD-SingleMapRenderer uses code from:</Run><LineBreak/>
+            <Hyperlink NavigateUri="https://github.com/nicolas-f/7DTD-leaflet" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/nicolas-f/7DTD-leaflet</Hyperlink>
+        </TextBlock>
+        <Button Grid.Row="6" Content="Schließen" Margin="8,8" Height="23" Width="200" Name="btnClose" Click="btnClose_Click" IsDefault="True" />
+    </Grid>
+</Window>

@@ -1,0 +1,271 @@
+﻿<Window x:Class="_7DTD_SingleMapRenderer.Presentation.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:app="clr-namespace:_7DTD_SingleMapRenderer.Core"
+        xmlns:conv="clr-namespace:_7DTD_SingleMapRenderer.Presentation.Converters"
+        xmlns:settings="clr-namespace:_7DTD_SingleMapRenderer.Settings"
+        FocusManager.FocusedElement="{Binding ElementName=buttonExportAsPng}"
+        Title="7DTD - SingleMapRenderer" Height="460" Width="500">
+    <Window.Resources>
+        <conv:InverseBooleanConverter x:Key="InverseBool"/>
+        <conv:AndBooleanConverter x:Key="AndBool"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <ObjectDataProvider x:Key="TileSizesValues" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="app:TileSizes" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="ColorValues" ObjectInstance="{x:Type Colors}" MethodName="GetProperties"/>
+        <ObjectDataProvider x:Key="InstalledFonts" ObjectType="{x:Type settings:AppSettings}" MethodName="GetAllInstalledFontNames"/>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open map file" Click="buttonBrowseMapFile_Click"/>
+                <Separator/>
+                <MenuItem Header="_Quit" Click="Quit_Clicked"/>
+            </MenuItem>
+            <MenuItem Header="_Settings">
+                <MenuItem Header="Edit settings" Click="menuSettingsEdit_Click"/>
+                <Separator/>
+                <MenuItem Header="Load defaults" Click="menuSettingsLoadDefault_Click" />
+            </MenuItem>
+            <MenuItem Header="Abou_t" Click="About_Clicked"/>
+
+            <MenuItem Header="Experimental" DockPanel.Dock="Right">
+                <MenuItem Header="Font test" Click="buttonToolsFonttest_Click" />
+                <MenuItem Header="XML to CSV Converter" Click="buttonXmlCsvConverter_Click"/>
+                <MenuItem Header="Item atlas splitter" Click="buttonItemAtlasSplitter_Click"/>
+            </MenuItem>
+            <Separator Visibility="Hidden"/>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Background="DimGray">
+            <TextBlock Text="{Binding StatusText}" Foreground="White"/>
+            <StatusBarItem HorizontalAlignment="Right" >
+            </StatusBarItem>
+        </StatusBar>
+        <!--Content-->
+        <Grid Grid.IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <GroupBox Grid.Row="0" Header="Map file">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ComboBox Grid.ColumnSpan="3" ItemsSource="{Binding Settings.SaveGames}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSaveGame}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Map file: "/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Text="{Binding Settings.MapFilePath}" TextWrapping="Wrap" Margin="5,2" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Text="POI file: " />
+                    <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Settings.PoiFilePath}" TextWrapping="Wrap" Margin="5,2" />
+                    <Button Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" Content="Browse" Click="buttonBrowsePoiFile_Click" Padding="5,1" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="1" Header="General">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFirstColumn" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsSecondColumn" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFifthColumn" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="0,2"/>
+                        </Style>
+                    </Grid.Resources>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Tile size: " />
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={StaticResource TileSizesValues}}"
+                              SelectedItem="{Binding Settings.SelectedTileSize}"/>
+                    <CheckBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Content="Draw background" IsChecked="{Binding Settings.RenderBackground}"/>
+
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="2">
+                <GroupBox.Header>
+                    <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,0" VerticalAlignment="Center"
+                              x:Name="chkRenderGrid" Content="Draw grid" IsChecked="{Binding Settings.RenderGrid}"/>
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFirstColumn" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsSecondColumn" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFifthColumn" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="0,2"/>
+                        </Style>
+                    </Grid.Resources>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Grid color: " />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
+                              IsEnabled="{Binding ElementName=chkRenderGrid, Path=IsChecked}"
+                              ItemsSource="{Binding Source={StaticResource ColorValues}}" SelectedValuePath="Name"
+                              SelectedValue="{Binding Settings.SelectedGridColorName}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="25" Margin="0,0,5,0" Background="{Binding Name}"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Grid.Row="0" Grid.Column="3" VerticalAlignment="Center">
+                        <Run Text="Alpha "/>
+                        <Run Text="{Binding ElementName=slidAlpha, Path=Value, StringFormat=0}"/>
+                        <Run Text=": "/>
+                    </TextBlock>
+                    <Slider Grid.Row="0" Grid.Column="4" x:Name="slidAlpha" IsEnabled="{Binding ElementName=chkRenderGrid, Path=IsChecked}"
+                            Maximum="255" SmallChange="1" LargeChange="25" Value="{Binding Settings.AlphaValue}" ToolTip="0=transparent, 255=opaque"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Grid size: " />
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,2" TextAlignment="Right" Text="{Binding Settings.GridSize}"
+                             IsEnabled="{Binding ElementName=chkRenderGrid, Path=IsChecked}"
+                             IsReadOnly="{Binding Settings.RenderRegionNumbers}"
+                             ToolTip="Integer: Distance between two grid lines, measured in in-game blocks."/>
+                    <CheckBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Content="Align to regions"
+                              IsEnabled="{Binding ElementName=chkRenderGrid, Path=IsChecked}"
+                              IsChecked="{Binding Settings.RenderRegionNumbers}"
+                              ToolTip="This also renders the region names."/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Grid font: " />
+                    <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
+                              ItemsSource="{Binding Source={StaticResource InstalledFonts}}"
+                              SelectedValue="{Binding Settings.RegionFontName}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding}" FontFamily="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <ComboBox.IsEnabled>
+                            <MultiBinding Converter="{StaticResource AndBool}">
+                                <Binding Path="Settings.RenderGrid"/>
+                                <Binding Path="Settings.RenderRegionNumbers"/>
+                            </MultiBinding>
+                        </ComboBox.IsEnabled>
+                    </ComboBox>
+                    <TextBlock Grid.Row="2" Grid.Column="3" VerticalAlignment="Center" Text="Grid font size: "/>
+                    <TextBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center"
+                             Text="{Binding Settings.RegionFontEmSize}"
+                             IsReadOnly="{Binding Settings.RenderRegionNumbers, Converter={StaticResource InverseBool}}"
+                             IsEnabled="{Binding ElementName=chkRenderGrid, Path=IsChecked}"/>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Row="3">
+                <GroupBox.Header>
+                    <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,4,0,0" VerticalAlignment="Center"
+                              Content="Draw waypoints" ToolTip="This includes in-game waypoints and POI file."
+                              x:Name="chkRenderWaypoints" IsChecked="{Binding Settings.RenderWaypoints}"/>
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFirstColumn" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsSecondColumn" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="SettingsFifthColumn" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin" Value="0,2"/>
+                        </Style>
+                    </Grid.Resources>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Font color: " />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
+                              IsEnabled="{Binding ElementName=chkRenderWaypoints, Path=IsChecked}"
+                              ItemsSource="{Binding Source={StaticResource ColorValues}}" SelectedValuePath="Name"
+                              SelectedValue="{Binding Settings.SelectedWaypointFontColorName}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="25" Margin="0,0,5,0" Background="{Binding Name}"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Font: " />
+                    <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
+                              IsEnabled="{Binding ElementName=chkRenderWaypoints, Path=IsChecked}"
+                              ItemsSource="{Binding Source={StaticResource InstalledFonts}}"
+                              SelectedValue="{Binding Settings.WaypointFontName}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding}" FontFamily="{Binding}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Text="Font size: "/>
+                    <TextBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center"
+                             Text="{Binding Settings.WaypointFontEmSize}"
+                             IsEnabled="{Binding ElementName=chkRenderWaypoints, Path=IsChecked}"/>
+                </Grid>
+            </GroupBox>
+
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Margin="10" Padding="5,1" Content="Export to png" Click="buttonExportAsPng_Click"
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBool}}"
+                        x:Name="buttonExportAsPng"/>
+                <Button Grid.Column="1" Margin="10" Padding="5,1" Content="Open in explorer" Click="buttonOpenExportFolder_Click"/>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>

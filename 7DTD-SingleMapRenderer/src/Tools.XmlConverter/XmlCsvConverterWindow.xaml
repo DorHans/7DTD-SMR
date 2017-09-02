@@ -1,0 +1,32 @@
+﻿<Window x:Class="_7DTD_SingleMapRenderer.Tools.XmlConverter.XmlCsvConverterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="XML to CSV Converter" Height="300" Width="420">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock TextWrapping="Wrap">
+            <Run Foreground="Red" Text="WARNING: USE WITH CAUTION! Always make a backup of your game files."/><LineBreak/>
+            <Run Text="These functions contain spoilers and ingame stats, that are otherwise invisible."/>
+            <Run Text="If you are curious, go ahead. Maybe a mod developer finds this useful for balancing his/her mods."/><LineBreak/>
+            <LineBreak/>
+            <Run Text="But honestly, this will only show values, that are already in plain xml files - nothing you can't see with good old notepad."/>
+        </TextBlock>
+        <StackPanel Grid.Row="1">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="10,10,10,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Convert items.xml" Click="btnItems_Click"/>
+            <Button Content="Convert blocks.xml" Click="btnBlocks_Click"/>
+            <Button Content="Convert materials.xml" Click="btnMaterials_Click"/>
+        </StackPanel>
+        <StatusBar Grid.Row="2">
+            <TextBlock x:Name="txtStatus"/>
+        </StatusBar>
+    </Grid>
+</Window>
