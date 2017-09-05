@@ -44,3 +44,6 @@ Will render the map to your desktop with the in-game background.
 
 Inspiration for this project
 * https://github.com/nicolas-f/7DTD-leaflet
+
+Writing an awesome library for reading/writing a player's profile
+* https://github.com/Karlovsky120/7DaysProfileEditor
