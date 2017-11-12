@@ -181,7 +181,7 @@ namespace _7DTD_SingleMapRenderer.Core
         /// </summary>
         /// <param name="mapfilename">Vollqualifizierter Pfad zur Map-Datei</param>
         /// <param name="pngfilename">Vollqualifizierter Pfad zur png-Datei</param>
-        /// <param name="progress">ProgressService zur Anzeige des Fortschritts<ProgressService zur Anzeige des Fortschritts/param>
+        /// <param name="progress">ProgressService zur Anzeige des Fortschritts</param>
         public void RenderWholeMap(string mapfilename, string pngfilename, IEnumerable<POI> pois, IProgressService progress = null)
         {
             if (progress != null)
@@ -468,7 +468,7 @@ namespace _7DTD_SingleMapRenderer.Core
         /// </summary>
         /// <param name="filename">Vollqualifizierter Pfad zur Map-Datei.</param>
         /// <returns>Auflistung mit Index und zugehörigen Rohdaten.</returns>
-        private Dictionary<UInt32, byte[]> getAllTilesFromMapFile(string filename)
+        private static Dictionary<UInt32, byte[]> getAllTilesFromMapFile(string filename)
         {
             Dictionary<UInt32, byte[]> tiles = null;
 
@@ -514,7 +514,7 @@ namespace _7DTD_SingleMapRenderer.Core
             return tiles;
         }
 
-        private Dictionary<UInt32, byte[]> getAllTiles(string filename)
+        internal static Dictionary<UInt32, byte[]> getAllTiles(string filename)
         {
             string datastorefilename = filename + ".ds";
 

@@ -38,11 +38,11 @@
                 <MenuItem Header="Load defaults" Click="menuSettingsLoadDefault_Click" />
             </MenuItem>
             <MenuItem Header="Abou_t" Click="About_Clicked"/>
-
             <MenuItem Header="Experimental" DockPanel.Dock="Right">
                 <MenuItem Header="Font test" Click="buttonToolsFonttest_Click" />
                 <MenuItem Header="XML to CSV Converter" Click="buttonXmlCsvConverter_Click"/>
                 <MenuItem Header="Item atlas splitter" Click="buttonItemAtlasSplitter_Click"/>
+                <MenuItem Header="_Region Viewer" Click="menuRegionViewer_Click"/>
             </MenuItem>
             <Separator Visibility="Hidden"/>
         </Menu>
@@ -237,7 +237,7 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    
+
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Font: " />
                     <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"
                               IsEnabled="{Binding ElementName=chkRenderWaypoints, Path=IsChecked}"

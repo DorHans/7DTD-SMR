@@ -1,0 +1,77 @@
+﻿<Window x:Class="_7DTD_SingleMapRenderer.Tools.RegionViewer.RegionViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:_7DTD_SingleMapRenderer.Presentation.Converters"
+        xmlns:ext="clr-namespace:_7DTD_SingleMapRenderer.Presentation.Extensions"
+        xmlns:rv="clr-namespace:_7DTD_SingleMapRenderer.Tools.RegionViewer"
+        xmlns:wpfex="clr-namespace:WPFExtensions.Controls;assembly=WPFExtensions"
+        Title="RegionViewer" Height="600" Width="650">
+    <Window.Resources>
+        <ResourceDictionary>
+            <conv:BoolToThicknessConverter x:Key="BoolToThickness"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Header="Regionfiles">
+            <DataGrid ItemsSource="{Binding RegionFiles}" SelectedItem="{Binding SelectedRegionFile}"
+                      AutoGenerateColumns="False" CanUserResizeRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="X" Binding="{Binding Path=X}" />
+                    <DataGridTextColumn Header="Z" Binding="{Binding Path=Y}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="0" Grid.Column="1" Header="Options">
+            <WrapPanel>
+                <CheckBox x:Name="cbShowGridLines" Content="ShowGridLines" IsChecked="True"/>
+            </WrapPanel>
+        </GroupBox>
+
+        <wpfex:ZoomControl Grid.Row="1" Grid.Column="1" 
+                           MaxZoom="10"  MinZoom="0.1" MaxZoomDelta="1.4142" ZoomDeltaMultiplier="50"
+                           AnimationLength="00:00:00.125">
+            <Canvas Height="512" Width="512">
+                <Image Source="{Binding MapImage, Mode=OneWay}" />
+                <ItemsControl DataContext="{Binding Path=SelectedRegionFile}" ItemsSource="{Binding Path=Chunks}"
+                              Background="Transparent">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="32" Columns="32" Height="512" Width="512"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="rv:ChunkViewModel">
+                            <ToggleButton Background="Transparent"
+                                          BorderThickness="{Binding ElementName=cbShowGridLines, Path=IsChecked, Converter={StaticResource BoolToThickness}, ConverterParameter={ext:Double 0.5}}"
+                                          ToolTip="{Binding Path=Name}"
+                                          Click="ToggleButton_Click" >
+                            </ToggleButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Canvas>
+        </wpfex:ZoomControl>
+
+        <StatusBar Grid.Row="2" Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Path=SelectedRegionFile.Name}"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Text="{Binding Path=StatusText}"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>

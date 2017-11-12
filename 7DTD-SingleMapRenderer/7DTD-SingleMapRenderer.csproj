@@ -62,19 +62,32 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFExtensions, Version=1.0.3437.34043, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFExtensions.1.0.0\lib\WPFExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="src\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="src\BaseClasses\BaseViewModel.cs" />
     <Compile Include="src\CommandLine\OptionAttribute.cs" />
+    <Compile Include="src\Presentation.Converters\BoolToThicknessConverter.cs" />
+    <Compile Include="src\Presentation.Extensions\DoubleExtension.cs" />
     <Compile Include="src\Presentation.Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\Presentation.Converters\AndBooleanConverter.cs" />
     <Compile Include="src\CommandLine\CommandLine.cs" />
     <Compile Include="src\Presentation.Converters\InverseBooleanConverter.cs" />
+    <Compile Include="src\Tools.RegionViewer\ChunkViewModel.cs" />
+    <Compile Include="src\Tools.RegionViewer\RegionFileViewModel.cs" />
+    <Compile Include="src\Tools.RegionViewer\RegionViewer.xaml.cs">
+      <DependentUpon>RegionViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\Tools.RegionViewer\RegionViewerViewModel.cs" />
     <Compile Include="src\Services\IProgressService.cs" />
     <Compile Include="src\Core\MapDataStore.cs">
       <SubType>Code</SubType>
@@ -118,6 +131,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="src\Tools.RegionViewer\RegionViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\Tools.FontTest\FontTestWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -155,6 +172,7 @@
       <Link>LICENSE</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -353,7 +353,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                     map.RegionFontName = this.Settings.RegionFontName;
                     map.RegionFontEmSize = this.Settings.RegionFontEmSize;
                     map.RenderWaypoints = this.Settings.RenderWaypoints;
-                    map.WaypointFontColor =  System.Drawing.Color.FromName(this.Settings.SelectedWaypointFontColorName);
+                    map.WaypointFontColor = System.Drawing.Color.FromName(this.Settings.SelectedWaypointFontColorName);
                     map.WaypointFontName = this.Settings.WaypointFontName;
                     map.WaypointFontEmSize = this.Settings.WaypointFontEmSize;
                     map.UseDataStore = this.Settings.UseDataStore;
@@ -478,6 +478,14 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 wnd.Owner = this;
                 wnd.Show();
             }
+        }
+
+        private void menuRegionViewer_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = new _7DTD_SingleMapRenderer.Tools.RegionViewer.RegionViewerViewModel(this.Settings.MapFilePath);
+            var wnd = new _7DTD_SingleMapRenderer.Tools.RegionViewer.RegionViewer(vm);
+            wnd.Owner = this;
+            wnd.Show();
         }
 
         #endregion
