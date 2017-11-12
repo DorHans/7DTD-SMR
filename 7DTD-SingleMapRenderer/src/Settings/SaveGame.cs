@@ -14,6 +14,7 @@ namespace _7DTD_SingleMapRenderer.Settings
         public string Name { get; set; }
         public string MapfilePath { get; set; }
         public string PoiFilePath { get; set; }
+        public string ImageFilePath { get; set; }
 
         public SaveGame()
         {
@@ -23,6 +24,7 @@ namespace _7DTD_SingleMapRenderer.Settings
         {
             this.Name = name;
             this.MapfilePath = mapfile;
+            this.ImageFilePath = mapfile + ".png";
         }
     }
 }

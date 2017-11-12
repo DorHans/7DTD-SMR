@@ -93,6 +93,12 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                     RaisePropertyChanged("SelectedSaveGame");
                     this.Settings.MapFilePath = value.MapfilePath;
                     this.Settings.PoiFilePath = value.PoiFilePath;
+                    if (!String.IsNullOrEmpty(value.ImageFilePath))
+                    {
+                        this.Settings.ImageFilePath = value.ImageFilePath;
+                        this.m_SaveFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(value.ImageFilePath);
+                        this.m_SaveFileDialog.FileName = value.ImageFilePath;
+                    }
                 }
             }
         }
@@ -194,6 +200,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                     if (String.Equals(sg.MapfilePath, this.Settings.MapFilePath, StringComparison.OrdinalIgnoreCase))
                     {
                         this.SelectedSaveGame = sg;
+                        this.Settings.ImageFilePath = sg.ImageFilePath;
                         break;
                     }
                 }
@@ -207,6 +214,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             if (this.SelectedSaveGame == null)
             {
                 m_CustomMapFile = new SaveGame("Custom . . .", this.Settings.MapFilePath);
+                m_CustomMapFile.ImageFilePath = this.Settings.ImageFilePath;
             }
             else
             {
@@ -318,6 +326,8 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             {
                 string imagefilename = this.m_SaveFileDialog.FileName;
                 this.Settings.ImageFilePath = imagefilename;
+                if (this.SelectedSaveGame != null)
+                    this.SelectedSaveGame.ImageFilePath = imagefilename;
 
                 // Ausgabedatei prüfen, ob Ordner existiert und Dateiname mit .png endet
                 string outputFolder = System.IO.Path.GetDirectoryName(imagefilename);
