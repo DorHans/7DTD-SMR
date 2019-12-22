@@ -173,10 +173,9 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                     this.Settings.SaveGames = new List<SaveGame>();
 
                     // lade alle Spielstände
-                    foreach (var item in new[] { "Navezgane", "Random Gen" })
+                    foreach (var folder in Directory.GetDirectories(this.Settings.SaveFolderPath))
                     {
-                        string folder = System.IO.Path.Combine(this.Settings.SaveFolderPath, item);
-                        if (Directory.Exists(folder))
+                        string item = System.IO.Path.GetFileName(folder);
                         {
                             string[] dirs = Directory.GetDirectories(folder);
                             foreach (var dir in dirs)

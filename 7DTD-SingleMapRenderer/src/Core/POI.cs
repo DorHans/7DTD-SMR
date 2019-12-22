@@ -130,50 +130,39 @@ namespace _7DTD_SingleMapRenderer.Core
 
             if (String.IsNullOrEmpty(ttpFilename) || !File.Exists(ttpFilename))
                 return pois;
-            
+
             try
             {
-                var playerfile = new PlayerDataFile(ttpFilename);
-
-                //dropped backpack
-                if (playerfile.droppedBackpackPosition.x.Get() != 0 && playerfile.droppedBackpackPosition.z.Get() != 0)
+                using (var fs = new FileStream(ttpFilename, FileMode.Open))
+                using (BinaryReader reader = new BinaryReader(fs))
                 {
-                    var poi1 = new POI(playerfile.droppedBackpackPosition.z.Get(), playerfile.droppedBackpackPosition.x.Get(), "dropped_backpack", "");
-                    pois.Add(poi1);
-                }
+                    var bytes = reader.ReadBytes((int)fs.Length);
 
-                // spawn point -> bedroll
-                if (playerfile.spawnPoints != null && playerfile.spawnPoints.Count > 0)
-                {
-                    int index = (playerfile.selectedSpawnPointKey.Get() > 0) ? (int)playerfile.selectedSpawnPointKey.Get() : 0;
-                    var spawnpoint = playerfile.spawnPoints.ElementAt(index);
-                    if (spawnpoint.x.Get() != 0 && spawnpoint.z.Get() != 0)
+                    var sigscan = new Util.SignatureScanner();
+                    int pos = sigscan.Find(bytes);
+                    if (pos > 0)
                     {
-                        var poi2 = new POI(spawnpoint.z.Get(), spawnpoint.x.Get(), "spawnposition", "");
-                        pois.Add(poi2);
+                        pos -= 16; // 1 byte length prefix + 3*4 bytes coordinates + 2 bytes waypoint count + 1 byte format
+                        reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+                        var waypointCollection = new WaypointCollection(reader);
+                        foreach (var waypoint in waypointCollection.waypoints)
+                        {
+                            var poi = new POI(waypoint.pos.z, waypoint.pos.x, waypoint.icon, waypoint.name);
+                            pois.Add(poi);
+                        }
                     }
-                }
-
-                // quick map marker
-                if (playerfile.markerPosition.x.Get() != 0 && playerfile.markerPosition.z.Get() != 0)
-                {
-                    var poi3 = new POI(playerfile.markerPosition.z.Get(), playerfile.markerPosition.x.Get(), "quickmarker", "");
-                    pois.Add(poi3);
-                }
-
-                // waypoints
-                var waypoints = playerfile.waypoints.waypointList;
-                foreach (var waypoint in waypoints)
-                {
-                    var poi = new POI(waypoint.pos.z.Get(), waypoint.pos.x.Get(), waypoint.icon.Get(), waypoint.name.Get());
-                    pois.Add(poi);
+                    else
+                    {
+                        reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 ;
             } // erstmal alle Fehler ignorieren und Map trotzdem rendern, bis ich ein besseres Verfahren zur Fehlermeldung habe (Logging)
-            
+
             return pois;
         }
 

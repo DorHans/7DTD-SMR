@@ -74,6 +74,9 @@
     </ApplicationDefinition>
     <Compile Include="src\BaseClasses\BaseViewModel.cs" />
     <Compile Include="src\CommandLine\OptionAttribute.cs" />
+    <Compile Include="src\SevenDaysSaveManipulator\PlayerData\Vector3D.cs" />
+    <Compile Include="src\SevenDaysSaveManipulator\PlayerData\Waypoint.cs" />
+    <Compile Include="src\SevenDaysSaveManipulator\PlayerData\WaypointCollection.cs" />
     <Compile Include="src\Presentation.Converters\BoolToThicknessConverter.cs" />
     <Compile Include="src\Presentation.Extensions\DoubleExtension.cs" />
     <Compile Include="src\Presentation.Windows\AboutWindow.xaml.cs">
@@ -111,6 +114,8 @@
       <DependentUpon>XmlCsvConverterWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\Tools.XmlConverter\XmlEntities.cs" />
+    <Compile Include="src\Util\SignatureScanner.cs" />
+    <Compile Include="src\Util\SigScan.cs" />
     <Page Include="src\Presentation.Windows\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -220,18 +225,17 @@
     <Resource Include="Resources\png\spawnposition.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\externals\7DaysProfileEditor\7DaysSaveManipulator\7DaysSaveManipulator.csproj">
-      <Project>{5358c4ca-e436-44a3-a6eb-36d2732f439f}</Project>
-      <Name>7DaysSaveManipulator</Name>
-    </ProjectReference>
+    <Resource Include="Resources\png\ui_game_symbol_minibike.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\png\ui_game_symbol_minibike.png" />
+    <Resource Include="Resources\png\ui_game_symbol_4x4.png" />
+    <Resource Include="Resources\png\ui_game_symbol_bicycle.png" />
+    <Resource Include="Resources\png\ui_game_symbol_motorcycle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2015/7/12" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.YearStamp.MonthAndDayStamp" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.YearStamp.MonthAndDayStamp" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2015/7/12" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
