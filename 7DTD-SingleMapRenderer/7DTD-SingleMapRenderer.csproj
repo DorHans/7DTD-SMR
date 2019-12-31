@@ -74,6 +74,8 @@
     </ApplicationDefinition>
     <Compile Include="src\BaseClasses\BaseViewModel.cs" />
     <Compile Include="src\CommandLine\OptionAttribute.cs" />
+    <Compile Include="src\Core\PrefabPOI.cs" />
+    <Compile Include="src\SevenDaysSaveManipulator\Data\Prefab.cs" />
     <Compile Include="src\SevenDaysSaveManipulator\PlayerData\Vector3D.cs" />
     <Compile Include="src\SevenDaysSaveManipulator\PlayerData\Waypoint.cs" />
     <Compile Include="src\SevenDaysSaveManipulator\PlayerData\WaypointCollection.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="src\Presentation.Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\Util\Helper.cs" />
     <Compile Include="src\Util\ShellHelper.cs" />
     <Compile Include="src\Core\TileSizes.cs" />
     <Compile Include="src\Tools.FontTest\FontTestWindow.xaml.cs">
@@ -115,7 +118,6 @@
     </Compile>
     <Compile Include="src\Tools.XmlConverter\XmlEntities.cs" />
     <Compile Include="src\Util\SignatureScanner.cs" />
-    <Compile Include="src\Util\SigScan.cs" />
     <Page Include="src\Presentation.Windows\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -231,6 +233,9 @@
     <Resource Include="Resources\png\ui_game_symbol_4x4.png" />
     <Resource Include="Resources\png\ui_game_symbol_bicycle.png" />
     <Resource Include="Resources\png\ui_game_symbol_motorcycle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\png\prefab.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

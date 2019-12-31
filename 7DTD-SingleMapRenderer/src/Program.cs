@@ -99,29 +99,23 @@ namespace _7DTD_SingleMapRenderer
                             set.ImageFilePath = System.IO.Path.Combine(mapdirectory, mapfilename + ".png");
                         }
 
-                        var pois = POI.FromCsvFile(set.PoiFilePath);
-                        // PlayerProfile hat den Namen der Map-Datei, nur mit der Endung .ttp
-                        string ttpfilename = System.IO.Path.Combine(mapdirectory, mapfilename + ".ttp");
-                        var waypoints = POI.FromTtpFile(ttpfilename);
-                        pois = pois.Concat(waypoints);
+                        IEnumerable<POI> pois;
+                        IEnumerable<PrefabPOI> prefabPois;
+                        int height, width;
+                        string worldFolderPath;
+                        List<SevenDaysSaveManipulator.Data.Prefab> prefabs = null;
+                        Util.Helper.GetPois(set, out pois);
+                        Util.Helper.GetPrefabPoisAndMapInfo(set, ref prefabs, out prefabPois, out height, out width, out worldFolderPath);
 
-                        var map = new MapRenderer();
-                        map.TileSize = (int)set.SelectedTileSize;
-                        map.RenderBackground = set.RenderBackground;
-                        map.RenderGrid = set.RenderGrid;
-                        map.GridSize = set.GridSize;
-                        map.GridColor = System.Drawing.Color.FromArgb(set.AlphaValue,
-                            System.Drawing.Color.FromName(set.SelectedGridColorName));
-                        map.RenderRegionNumbers = set.RenderRegionNumbers;
-                        map.RegionFontName = set.RegionFontName;
-                        map.RegionFontEmSize = set.RegionFontEmSize;
-                        map.RenderWaypoints = set.RenderWaypoints;
-                        map.WaypointFontColor = System.Drawing.Color.FromName(set.SelectedWaypointFontColorName);
-                        map.WaypointFontName = set.WaypointFontName;
-                        map.WaypointFontEmSize = set.WaypointFontEmSize;
-                        map.UseDataStore = set.UseDataStore;
-
-                        map.RenderWholeMap(set.MapFilePath, set.ImageFilePath, pois, progress);
+                        var map = new MapRenderer(set);
+                        map.RenderWholeMap(set.MapFilePath,
+                            set.ImageFilePath,
+                            pois,
+                            prefabPois,
+                            worldFolderPath,
+                            height,
+                            width,
+                            progress);
                     }
                 }
                 catch (Exception ex)

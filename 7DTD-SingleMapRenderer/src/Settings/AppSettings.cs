@@ -43,6 +43,22 @@ namespace _7DTD_SingleMapRenderer.Settings
             }
         }
 
+        private string m_GameRootPath;
+        [Option("root", "gameroot", "Path to the game folder \"7 Days To Die\"", Default = @"C:\Program Files(x86)\Steam\SteamApps\common\7 Days To Die")]
+        public string GameRootPath
+        {
+            get { return m_GameRootPath; }
+            set
+            {
+                if (m_GameRootPath != value)
+                {
+                    m_GameRootPath = value;
+                    RaisePropertyChanged("GameRootPath");
+                    isDirty = true;
+                }
+            }
+        }
+
         private string m_MapFilePath;
         [Option("m", "map", "Path to the map file", Default = "")]
         public string MapFilePath
@@ -93,7 +109,7 @@ namespace _7DTD_SingleMapRenderer.Settings
 
         private TileSizes m_SelectedTileSize;
         [XmlElement("TileSize")]
-        [Option("ts", "tilesize", "Size of each map tile (16, 8, 4, 2, 1)", Default = TileSizes.FullSize)]
+        [Option("ts", "tilesize", "Size of each map tile (64, 32, 16, 8, 4, 2, 1)", Default = TileSizes.FullSize)]
         public TileSizes SelectedTileSize
         {
             get { return m_SelectedTileSize; }
@@ -120,6 +136,23 @@ namespace _7DTD_SingleMapRenderer.Settings
                 {
                     m_RenderBackground = value;
                     RaisePropertyChanged("RenderBackground");
+                    isDirty = true;
+                }
+            }
+        }
+
+        private bool m_RenderBiomeMap;
+        [XmlElement("RenderBiomeMap")]
+        [Option("bm", "biomemap", "Draws the biome map as background. Has priority over switch \"background\".", Default = false)]
+        public bool RenderBiomeMap
+        {
+            get { return m_RenderBiomeMap; }
+            set
+            {
+                if (m_RenderBiomeMap != value)
+                {
+                    m_RenderBiomeMap = value;
+                    RaisePropertyChanged("RenderBiomeMap");
                     isDirty = true;
                 }
             }
@@ -265,6 +298,23 @@ namespace _7DTD_SingleMapRenderer.Settings
                 {
                     m_RenderWaypoints = value;
                     RaisePropertyChanged("RenderWaypoints");
+                    isDirty = true;
+                }
+            }
+        }
+
+        private bool m_RenderPrefabMarker;
+        [XmlElement("RenderPrefabMarker")]
+        [Option("pm", "prefabmarker", "Draws prefabs as waypoints. Requires option 'waypoints'.", Default = false)]
+        public bool RenderPrefabMarker
+        {
+            get { return m_RenderPrefabMarker; }
+            set
+            {
+                if (m_RenderPrefabMarker != value)
+                {
+                    m_RenderPrefabMarker = value;
+                    RaisePropertyChanged("RenderPrefabMarker");
                     isDirty = true;
                 }
             }

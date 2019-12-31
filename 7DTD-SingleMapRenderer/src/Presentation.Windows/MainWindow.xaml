@@ -95,6 +95,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.Resources>
                         <Style TargetType="TextBlock">
@@ -108,7 +109,10 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Tile size: " />
                     <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={StaticResource TileSizesValues}}"
                               SelectedItem="{Binding Settings.SelectedTileSize}"/>
-                    <CheckBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Content="Draw background" IsChecked="{Binding Settings.RenderBackground}"/>
+                    <CheckBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Content="Draw background" IsChecked="{Binding Settings.RenderBackground}"
+                              ToolTip="Draws the 'old' in-game background."/>
+                    <CheckBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Content="Draw biome map" IsChecked="{Binding Settings.RenderBiomeMap}"
+                              ToolTip="Draws the biome map as background. Has priority over 'Draw background'."/>
 
                 </Grid>
             </GroupBox>
@@ -237,6 +241,10 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+
+                    <CheckBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Content="Draw prefab marker" IsChecked="{Binding Settings.RenderPrefabMarker}"
+                              IsEnabled="{Binding ElementName=chkRenderWaypoints, Path=IsChecked}"
+                              ToolTip="Draws prefabs as waypoints"/>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Font: " />
                     <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"

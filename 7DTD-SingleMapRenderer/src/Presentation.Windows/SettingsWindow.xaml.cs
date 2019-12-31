@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using _7DTD_SingleMapRenderer.Settings;
+using Microsoft.Win32;
 
 namespace _7DTD_SingleMapRenderer.Presentation.Windows
 {
@@ -26,6 +27,19 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 {
                     m_settings.UseDataStore = value;
                     RaisePropertyChanged("UseDataStore");
+                }
+            }
+        }
+        
+        public string GameRootPath
+        {
+            get { return m_settings.GameRootPath; }
+            set
+            {
+                if (m_settings.GameRootPath != value)
+                {
+                    m_settings.GameRootPath = value;
+                    RaisePropertyChanged("GameRootPath");
                 }
             }
         }
@@ -59,5 +73,19 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             this.Close();
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "7DaysToDie.exe|7DaysToDie.exe|All files (*.*)|*.*";
+            openFileDialog.InitialDirectory = GameRootPath;
+            var result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                string filepath = openFileDialog.FileName;
+                string directory = System.IO.Path.GetDirectoryName(filepath);
+                this.GameRootPath = directory;
+            }
+            ;
+        }
     }
 }

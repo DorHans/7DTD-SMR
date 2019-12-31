@@ -35,6 +35,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
         private Microsoft.Win32.SaveFileDialog m_SaveFileDialog;
         private Stopwatch m_Stopwatch;
         private SaveGame m_CustomMapFile;
+        private List<SevenDaysSaveManipulator.Data.Prefab> prefabs;
 
         public bool IsDebugBuild { get; private set; }
 
@@ -342,32 +343,22 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 var bw = new BackgroundWorker();
                 bw.DoWork += (s, a) =>
                 {
-                    var pois = POI.FromCsvFile(this.Settings.PoiFilePath);
+                    IEnumerable<POI> pois;
+                    IEnumerable<PrefabPOI> prefabPois;
+                    int height, width;
+                    string worldFolderPath;
+                    Util.Helper.GetPois(this.Settings, out pois);
+                    Util.Helper.GetPrefabPoisAndMapInfo(this.Settings, ref prefabs, out prefabPois, out height, out width, out worldFolderPath);
 
-                    //var waypoints = Util.GetPOIsFromSavegame(this.Settings.MapFilePath);
-                    string directory = System.IO.Path.GetDirectoryName(this.Settings.MapFilePath);
-                    string ttpfilename = System.IO.Path.GetFileNameWithoutExtension(this.Settings.MapFilePath) + ".ttp";
-                    ttpfilename = System.IO.Path.Combine(directory, ttpfilename);
-                    var waypoints = POI.FromTtpFile(ttpfilename);
-                    pois = pois.Concat(waypoints);
-
-                    var map = new MapRenderer();
-                    map.TileSize = (int)this.Settings.SelectedTileSize;
-                    map.RenderBackground = this.Settings.RenderBackground;
-                    map.RenderGrid = this.Settings.RenderGrid;
-                    map.GridSize = this.Settings.GridSize;
-                    map.GridColor = System.Drawing.Color.FromArgb(this.Settings.AlphaValue,
-                        System.Drawing.Color.FromName(this.Settings.SelectedGridColorName));
-                    map.RenderRegionNumbers = this.Settings.RenderRegionNumbers;
-                    map.RegionFontName = this.Settings.RegionFontName;
-                    map.RegionFontEmSize = this.Settings.RegionFontEmSize;
-                    map.RenderWaypoints = this.Settings.RenderWaypoints;
-                    map.WaypointFontColor = System.Drawing.Color.FromName(this.Settings.SelectedWaypointFontColorName);
-                    map.WaypointFontName = this.Settings.WaypointFontName;
-                    map.WaypointFontEmSize = this.Settings.WaypointFontEmSize;
-                    map.UseDataStore = this.Settings.UseDataStore;
-
-                    map.RenderWholeMap(this.Settings.MapFilePath, imagefilename, pois, (IProgressService)this);
+                    var map = new MapRenderer(this.Settings);
+                    map.RenderWholeMap(this.Settings.MapFilePath,
+                        imagefilename,
+                        pois,
+                        prefabPois,
+                        worldFolderPath,
+                        height,
+                        width,
+                        (IProgressService)this);
                 };
                 bw.RunWorkerCompleted += (s, a) =>
                 {
@@ -375,7 +366,10 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                     this.IsRunning = false;
                     if (a.Error != null)
                     {
-                        this.StatusText = a.Error.GetType().ToString() + ": " + a.Error.Message.ToString();
+                        if (a.Error.TargetSite.DeclaringType == typeof(System.Drawing.Bitmap) && a.Error.TargetSite.IsConstructor)
+                            this.StatusText = "Couldn't create image. Try a smaller 'Tile size'.";
+                        else
+                            this.StatusText = a.Error.GetType().ToString() + ": " + a.Error.Message.ToString();
                     }
                     else
                     {

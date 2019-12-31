@@ -20,160 +20,12 @@ namespace _7DTD_SingleMapRenderer.Core
     /// </summary>
     public class MapRenderer
     {
-        #region ********** Felder und Eigenschaften **********
+        private AppSettings m_Settings;
 
-        private int tileSize = 16;
-        private bool renderBackground = false;
-        private bool renderGrid = false;
-        private int gridSize = AppSettings.Default.GridSize;
-        private System.Drawing.Color gridColor = System.Drawing.Color.Red;
-        private bool renderRegionNumbers = false;
-        private string regionFontName = AppSettings.Default.RegionFontName;
-        private float regionFontEmSize = AppSettings.Default.RegionFontEmSize;
-        private System.Drawing.Color waypointFontColor = System.Drawing.Color.WhiteSmoke;
-        private bool renderWaypoints = AppSettings.Default.RenderWaypoints;
-        private string waypointFontName = AppSettings.Default.WaypointFontName;
-        private float waypointFontEmSize = AppSettings.Default.WaypointFontEmSize;
-        private bool useDataStore = AppSettings.Default.UseDataStore;
-
-        /// <summary>
-        /// Größe eines MapTiles oder Chunks. Bestimmt Endgröße der png-Datei (16=Standard, 2^x erlaubt)
-        /// </summary>
-        public int TileSize
+        public MapRenderer(AppSettings settings)
         {
-            get { return tileSize; }
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value", "TileSize must be greater than 0.");
-                double log = Math.Log(tileSize, 2);
-
-                if (log != (int)log)
-                    throw new ArgumentOutOfRangeException("value", "TileSize must be a power of two. (e.g. 2^4 = 16 = TileSize)");
-
-                tileSize = value;
-            }
+            this.m_Settings = settings;
         }
-
-        /// <summary>
-        /// Gibt an, ob der Kartenhintergrund aus dem Spiel übernommen werden soll, andernfalls bleibt der Hintergrund schwarz.
-        /// </summary>
-        public bool RenderBackground
-        {
-            get { return renderBackground; }
-            set { renderBackground = value; }
-        }
-
-        /// <summary>
-        /// Gibt an, ob ein Gitter über der Karte gezeichnet werden soll.
-        /// Der Nullpunkt wird mit einem Kreis markiert.
-        /// </summary>
-        public bool RenderGrid
-        {
-            get { return renderGrid; }
-            set { renderGrid = value; }
-        }
-
-        /// <summary>
-        /// Gibt den Abstand zwischen zwei Gitterlinien an.
-        /// Einheit: ingame blocksize
-        /// </summary>
-        public int GridSize
-        {
-            get { return gridSize; }
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value", "GridSize must be greater than 0.");
-                gridSize = value;
-            }
-        }
-
-        /// <summary>
-        /// Die Farbe des Gitters.
-        /// </summary>
-        public System.Drawing.Color GridColor
-        {
-            get { return gridColor; }
-            set { gridColor = value; }
-        }
-
-        /// <summary>
-        /// Gibt an, ob die Nummer der Gitterzelle gerendert werden soll.
-        /// </summary>
-        public bool RenderRegionNumbers
-        {
-            get { return renderRegionNumbers; }
-            set { renderRegionNumbers = value; }
-        }
-
-        /// <summary>
-        /// Font, in dem die Beschriftung der Region gerendert wird
-        /// </summary>
-        public string RegionFontName
-        {
-            get { return regionFontName; }
-            set { regionFontName = value; }
-        }
-
-        /// <summary>
-        /// Fontgröße, in der die Beschriftung der Region gerendert wird
-        /// </summary>
-        public float RegionFontEmSize
-        {
-            get { return regionFontEmSize; }
-            set { regionFontEmSize = value; }
-        }
-
-        /// <summary>
-        /// Gibt an, ob die Kartenmarkierungen gezeichnet werden sollen.
-        /// Dies umfasst die ingame marker und die POI.csv.
-        /// </summary>
-        public bool RenderWaypoints
-        {
-            get { return renderWaypoints; }
-            set { renderWaypoints = value; }
-        }
-
-        /// <summary>
-        /// Die Farbe des Namens der Wegpunkte.
-        /// </summary>
-        public System.Drawing.Color WaypointFontColor
-        {
-            get { return waypointFontColor; }
-            set { waypointFontColor = value; }
-        }
-
-        /// <summary>
-        /// Font, in dem die Beschriftung der Wegpunkte gerendert wird
-        /// </summary>
-        public string WaypointFontName
-        {
-            get { return waypointFontName; }
-            set { waypointFontName = value; }
-        }
-
-        /// <summary>
-        /// Fontgröße, in der die Beschriftung der Wegpunkte gerendert wird
-        /// </summary>
-        public float WaypointFontEmSize
-        {
-            get { return waypointFontEmSize; }
-            set { waypointFontEmSize = value; }
-        }
-
-        /// <summary>
-        /// Gibt an, ob die MapTiles in einer separaten Datei gespeichert werden sollen.
-        /// Damit wird die Obergrenze von 131.072 Tiles pro Map-Datei umgangen.
-        /// ACHTUNG: Kann speicherintensiv werden.
-        /// </summary>
-        public bool UseDataStore
-        {
-            get { return useDataStore; }
-            set { useDataStore = value; }
-        }
-
-        #endregion
 
         /// <summary>
         /// Exportiert die gesamte Map als png-Datei.
@@ -182,14 +34,16 @@ namespace _7DTD_SingleMapRenderer.Core
         /// <param name="mapfilename">Vollqualifizierter Pfad zur Map-Datei</param>
         /// <param name="pngfilename">Vollqualifizierter Pfad zur png-Datei</param>
         /// <param name="progress">ProgressService zur Anzeige des Fortschritts</param>
-        public void RenderWholeMap(string mapfilename, string pngfilename, IEnumerable<POI> pois, IProgressService progress = null)
+        public void RenderWholeMap(string mapfilename, string pngfilename, IEnumerable<POI> pois, IEnumerable<PrefabPOI> prefabPois, string worldFolderPath = "", int height = 0, int width = 0, IProgressService progress = null)
         {
+            int tileSize = (int)m_Settings.SelectedTileSize;
+
             if (progress != null)
                 progress.Report("Process started. Processing map file . . .");
 
             // die map-Datei einlesen
             Dictionary<UInt32, byte[]> tiles = null;
-            if (useDataStore)
+            if (m_Settings.UseDataStore)
                 tiles = getAllTiles(mapfilename);
             else
                 tiles = getAllTilesFromMapFile(mapfilename);
@@ -202,29 +56,51 @@ namespace _7DTD_SingleMapRenderer.Core
             // Größenabschätzung
             int maxX = int.MinValue, maxY = int.MinValue;
             int minX = int.MaxValue, minY = int.MaxValue;
-            foreach (var key in tiles.Keys)
+            int sizeX, sizeY;
+            if (height > 0 && width > 0)
             {
-                int x = (Int16)(key & 0xFFFF);
-                int y = (Int16)((key >> 16));
+                sizeX = (int)(width * (tileSize / 16.0));
+                sizeY = (int)(height * (tileSize / 16.0));
 
-                if (x > maxX)
-                    maxX = x;
-                if (y > maxY)
-                    maxY = y;
-                if (x < minX)
-                    minX = x;
-                if (y < minY)
-                    minY = y;
+                minX = -sizeX / 2 / tileSize + 1;
+                maxX = sizeX / 2 / tileSize - 2;
+
+                minY = -sizeY / 2 / tileSize + 1;
+                maxY = sizeY / 2 / tileSize - 2;
+            }
+            else
+            {
+                foreach (var key in tiles.Keys)
+                {
+                    int x = (Int16)(key & 0xFFFF);
+                    int y = (Int16)((key >> 16));
+
+                    if (x > maxX)
+                        maxX = x;
+                    if (y > maxY)
+                        maxY = y;
+                    if (x < minX)
+                        minX = x;
+                    if (y < minY)
+                        minY = y;
+                }
+
+                // zu der Größe noch 3 Tiles addieren, jeweils eines am Rand und genau eines in der Mitte
+                sizeX = (Math.Abs(maxX - minX) + 3) * tileSize;
+                sizeY = (Math.Abs(maxY - minY) + 3) * tileSize;
             }
 
-            // zu der Größe noch 3 Tiles addieren, jeweils eines am Rand und genau eines in der Mitte
-            int sizeX = (Math.Abs(maxX - minX) + 3) * tileSize;
-            int sizeY = (Math.Abs(maxY - minY) + 3) * tileSize;
 
             // Tiles wieder zusammensetzen
             using (Bitmap big_tile = new Bitmap(sizeX, sizeY, System.Drawing.Imaging.PixelFormat.Format16bppRgb555))
             {
-                if (renderBackground)
+                if (m_Settings.RenderBiomeMap)
+                {
+                    if (progress != null)
+                        progress.Report("Rendering biome map . . .");
+                    renderBiomeMap(big_tile, worldFolderPath);
+                }
+                else if (m_Settings.RenderBackground)
                 {
                     if (progress != null)
                         progress.Report("Rendering background . . .");
@@ -234,25 +110,32 @@ namespace _7DTD_SingleMapRenderer.Core
                 if (progress != null)
                     progress.Report("Rendering map tiles . . .");
                 if (tileSize == 16)
-                    renderTilesOptimized(big_tile, tiles, maxY, minX);
+                    renderTilesOptimized(big_tile, tiles, minX, maxX, minY, maxY);
                 else
                     renderTiles(big_tile, tiles, maxY, minX);
 
-                if (renderGrid)
+                if (m_Settings.RenderGrid)
                 {
                     if (progress != null)
                         progress.Report("Rendering grid . . .");
                     renderGridTo(big_tile, minX, maxY);
 
-                    if (renderRegionNumbers)
+                    if (m_Settings.RenderRegionNumbers)
                         renderRegionNumbersTo(big_tile, minX, maxX, minY, maxY);
                 }
 
-                if (renderWaypoints && pois != null)
+                if (m_Settings.RenderWaypoints && pois != null)
                 {
                     if (progress != null)
                         progress.Report("Rendering waypoints . . .");
                     renderPOIs(big_tile, pois, minX, maxX, minY, maxY);
+                }
+
+                if (m_Settings.RenderWaypoints && prefabPois != null)
+                {
+                    if (progress != null)
+                        progress.Report("Rendering prefabs . . .");
+                    renderPrefabPois(big_tile, prefabPois, minX, maxX, minY, maxY);
                 }
 
                 if (progress != null)
@@ -265,10 +148,11 @@ namespace _7DTD_SingleMapRenderer.Core
         }
 
         /// <summary>
-        /// Schreibt alle Tiles in das Bitmap. Unterstütz mehrere Größen.
+        /// Schreibt alle Tiles in das Bitmap. Unterstützt mehrere Größen.
         /// </summary>
         private void renderTiles(Bitmap big_tile, Dictionary<UInt32, byte[]> tiles, int maxY, int minX)
         {
+            int tileSize = (int)m_Settings.SelectedTileSize;
             using (Graphics g = Graphics.FromImage(big_tile))
             {
                 foreach (var tile in tiles)
@@ -291,8 +175,9 @@ namespace _7DTD_SingleMapRenderer.Core
         /// Schreibt alle Tiles in das Bitmap. Optimierte Methode. Unterstützt nur "Fullsize".
         /// Basiert auf: https://social.msdn.microsoft.com/Forums/vstudio/en-US/de9ee1c9-16d3-4422-a99f-e863041e4c1d/reading-raw-rgba-data-into-a-bitmap
         /// </summary>
-        private void renderTilesOptimized(Bitmap big_tile, Dictionary<UInt32, byte[]> tiles, int maxY, int minX)
+        private void renderTilesOptimized(Bitmap big_tile, Dictionary<UInt32, byte[]> tiles, int minX, int maxX, int minY, int maxY)
         {
+            int tileSize = (int)m_Settings.SelectedTileSize;
             int sizeX = big_tile.Width;
             int sizeY = big_tile.Height;
             Rectangle rect = new Rectangle(0, 0, sizeX, sizeY);
@@ -304,6 +189,11 @@ namespace _7DTD_SingleMapRenderer.Core
             {
                 int x = (Int16)(tile.Key & 0xFFFF);
                 int y = (Int16)((tile.Key >> 16));
+
+                if (x > maxX + 1 || x < minX - 1)
+                    continue;
+                if (y > maxY + 1 || y < minY - 1)
+                    continue;
 
                 int offset = ((x - minX + 1) + (maxY - y + 1) * sizeX) * tileSize;
                 ptr = basePtr + offset * 2;
@@ -329,8 +219,40 @@ namespace _7DTD_SingleMapRenderer.Core
             }
         }
 
+        private void renderBiomeMap(Bitmap big_tile, string worldFolderPath)
+        {
+            if (String.IsNullOrEmpty(worldFolderPath))
+                return;
+
+            using (Graphics g = Graphics.FromImage(big_tile))
+            {
+                string biomeMap = Path.Combine(worldFolderPath, "biomes.png");
+                if (File.Exists(biomeMap))
+                {
+                    using (Image img = Image.FromFile(biomeMap))
+                    {
+                        g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                    }
+                }
+
+                string splat3 = Path.Combine(worldFolderPath, "splat3.png");
+                if (File.Exists(splat3))
+                {
+                    using (Image img = Image.FromFile(splat3))
+                    {
+                        g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                    }
+                }
+            }
+        }
+
         private void renderGridTo(Bitmap big_tile, int minX, int maxY)
         {
+            int tileSize = (int)m_Settings.SelectedTileSize;
+            int gridSize = m_Settings.GridSize;
+            System.Drawing.Color gridColor = System.Drawing.Color.FromArgb(this.m_Settings.AlphaValue,
+                        System.Drawing.Color.FromName(this.m_Settings.SelectedGridColorName));
+
             int sizeX = big_tile.Width;
             int sizeY = big_tile.Height;
             int tilegridsize = gridSize * tileSize / 16;
@@ -354,7 +276,7 @@ namespace _7DTD_SingleMapRenderer.Core
 
                 //horizontale Linien
                 // -14 = -16 (aus tiles.Key) + 1 Rand + 1 Mitte
-                int mitteY = Math.Abs(maxY + 2) * tileSize;
+                int mitteY = Math.Abs(maxY + 2) * tileSize - 1; // minus 1 Pixel, damit das Grid ordentlich sitzt
                 int offsetY = mitteY % tilegridsize;
                 while (offsetY <= sizeY)
                 {
@@ -363,14 +285,20 @@ namespace _7DTD_SingleMapRenderer.Core
                 }
                 int circleSize = 10;
                 var nullpunkt = new System.Drawing.Point((-minX + 1) * tileSize, (maxY + 2) * tileSize);
-                g.DrawEllipse(pen, nullpunkt.X - circleSize / 2, nullpunkt.Y - circleSize / 2, circleSize, circleSize);
+                g.DrawEllipse(pen, nullpunkt.X - circleSize / 2, nullpunkt.Y - circleSize / 2 - 1, circleSize, circleSize);
             }
         }
 
         private void renderRegionNumbersTo(Bitmap big_tile, int minX, int maxX, int minY, int maxY)
         {
-            int sizeX = big_tile.Width;
-            int sizeY = big_tile.Height;
+            int tileSize = (int)m_Settings.SelectedTileSize;
+            System.Drawing.Color gridColor = System.Drawing.Color.FromArgb(this.m_Settings.AlphaValue,
+                        System.Drawing.Color.FromName(this.m_Settings.SelectedGridColorName));
+            string regionFontName = m_Settings.RegionFontName;
+            float regionFontEmSize = m_Settings.RegionFontEmSize;
+
+            //int sizeX = big_tile.Width;
+            //int sizeY = big_tile.Height;
             int regiongridsize = 512 * tileSize / 16;
 
             StringFormat sf = new StringFormat();
@@ -382,7 +310,7 @@ namespace _7DTD_SingleMapRenderer.Core
             using (var drawBrush = new System.Drawing.SolidBrush(gridColor))
             {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-                var nullpunkt = new System.Drawing.Point((-minX + 1) * tileSize, (maxY + 2) * tileSize);
+                var nullpunkt = new System.Drawing.Point((-minX + 1) * tileSize, (maxY + 2) * tileSize - 1);
 
                 int regionSize = regiongridsize / 16;
                 int regionXmin = (int)Math.Round((double)minX / regionSize);
@@ -410,6 +338,11 @@ namespace _7DTD_SingleMapRenderer.Core
             if (pois == null)
                 throw new ArgumentNullException("pois");
 
+            int tileSize = (int)m_Settings.SelectedTileSize;
+            System.Drawing.Color waypointFontColor = System.Drawing.Color.FromName(this.m_Settings.SelectedWaypointFontColorName);
+            string waypointFontName = this.m_Settings.WaypointFontName;
+            float waypointFontEmSize = this.m_Settings.WaypointFontEmSize;
+
             int mitteX = (-minX + 1) * tileSize;
             int mitteY = (maxY + 2) * tileSize;
 
@@ -424,6 +357,7 @@ namespace _7DTD_SingleMapRenderer.Core
             using (var drawFont = new System.Drawing.Font(waypointFontName, waypointFontEmSize))
             using (var drawBrush = new System.Drawing.SolidBrush(waypointFontColor))
             {
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
                 foreach (var poi in pois)
                 {
                     // TODO: Ladefehler behandeln oder ignorieren?
@@ -436,6 +370,51 @@ namespace _7DTD_SingleMapRenderer.Core
 
                         if (!String.IsNullOrWhiteSpace(poi.Name))
                             g.DrawString(poi.Name, drawFont, drawBrush, x, y + symbolsize, sf);
+                    }
+                }
+            }
+        }
+
+        private void renderPrefabPois(Bitmap big_tile, IEnumerable<PrefabPOI> prefabPois, int minX, int maxX, int minY, int maxY)
+        {
+            if (prefabPois == null)
+                throw new ArgumentNullException("prefabPois");
+
+            int tileSize = (int)m_Settings.SelectedTileSize;
+            System.Drawing.Color waypointFontColor = System.Drawing.Color.FromName(this.m_Settings.SelectedWaypointFontColorName);
+            string waypointFontName = this.m_Settings.WaypointFontName;
+            float waypointFontEmSize = this.m_Settings.WaypointFontEmSize;
+
+            int mitteX = (-minX + 1) * tileSize;
+            int mitteY = (maxY + 2) * tileSize;
+            double scale = tileSize / 16.0;
+
+            StringFormat sf = new StringFormat();
+            sf.LineAlignment = StringAlignment.Center;
+            sf.Alignment = StringAlignment.Center;
+
+            using (Graphics g = Graphics.FromImage(big_tile))
+            using (var drawFont = new System.Drawing.Font(waypointFontName, waypointFontEmSize))
+            using (var drawBrush = new System.Drawing.SolidBrush(waypointFontColor))
+            {
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                foreach (var poi in prefabPois)
+                {
+                    Image img = poi.GetImage(scale);
+                    if (img != null)
+                    {
+                        int x = mitteX + (int)(poi.Longitude * scale);
+                        int y = mitteY - (int)(poi.Latitude * scale);
+                        int width = (int)(poi.Width * scale);
+                        int height = (int)(poi.Height * scale);
+
+                        g.DrawImage(img, x - width / 2, y - height / 2, width, height);
+
+                        if (!String.IsNullOrWhiteSpace(poi.Name))
+                        {
+                            int textOffsetY = 0; // (int)waypointFontEmSize + height / 2;
+                            g.DrawString(poi.Name, drawFont, drawBrush, x, y + textOffsetY, sf);
+                        }
                     }
                 }
             }
