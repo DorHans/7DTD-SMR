@@ -233,6 +233,7 @@
     <Resource Include="Resources\png\ui_game_symbol_4x4.png" />
     <Resource Include="Resources\png\ui_game_symbol_bicycle.png" />
     <Resource Include="Resources\png\ui_game_symbol_motorcycle.png" />
+    <Resource Include="Resources\png\ui_game_symbol_gyrocopter.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\png\prefab.png" />
