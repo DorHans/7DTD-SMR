@@ -27,10 +27,25 @@ namespace SevenDaysSaveManipulator.Data
             if (!Directory.Exists(path))
                 yield break;
 
-            var files = Directory.GetFiles(path, "*.tts");
+            var files = Directory.GetFiles(path, "*.tts", SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
+                #region tried to skip all really small prefabs, like signs or zoning helpers
+                // failed, because I hadn't find an attribute that distinguishes relevant and irrelevant prefabs
+                //string path2 = Path.GetDirectoryName(file);
+                //string xmlFilename = Path.Combine(path2, filename+".xml");
+
+                //var doc = new System.Xml.XmlDocument();
+                //doc.Load(xmlFilename);
+
+                //var zoningNode = doc.SelectSingleNode("/prefab/property[@name='Zoning']");
+                //var zoningValueAttribute = zoningNode?.Attributes["value"]?.Value;
+                //if (zoningValueAttribute != null)
+                //    if (zoningValueAttribute == "none")
+                //        continue;
+                #endregion
+
                 using (var fs = new FileStream(file, FileMode.Open))
                 using (var br = new BinaryReader(fs))
                 {

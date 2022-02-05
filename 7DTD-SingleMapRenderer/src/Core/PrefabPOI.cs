@@ -90,6 +90,11 @@ namespace _7DTD_SingleMapRenderer.Core
                 if (nameAttr == null || posAttr == null)
                     continue;
 
+                if (nameAttr.StartsWith("rwg_tile_"))
+                    continue;
+                if (nameAttr.StartsWith("part_"))
+                    continue;
+
                 var positionVector = posAttr.Split(',');
                 if (positionVector.Length < 3)
                     continue;
