@@ -226,6 +226,8 @@ namespace _7DTD_SingleMapRenderer.Core
 
             using (Graphics g = Graphics.FromImage(big_tile))
             {
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+
                 string biomeMap = Path.Combine(worldFolderPath, "biomes.png");
                 if (File.Exists(biomeMap))
                 {
@@ -235,14 +237,151 @@ namespace _7DTD_SingleMapRenderer.Core
                     }
                 }
 
-                string splat3 = Path.Combine(worldFolderPath, "splat3.png");
+                string splat3 = Path.Combine(worldFolderPath, "splat3_processed.png");
+                if (!File.Exists(splat3))
+                    splat3 = Path.Combine(worldFolderPath, "splat3.png");
                 if (File.Exists(splat3))
                 {
-                    using (Image img = Image.FromFile(splat3))
+                    using (Bitmap img = (Bitmap)Bitmap.FromFile(splat3))
                     {
-                        g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                        int pixelformatsize = Image.GetPixelFormatSize(img.PixelFormat);
+                        if (pixelformatsize == 32)
+                        {
+                            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+                            BitmapData bmpData = img.LockBits(rect, ImageLockMode.ReadWrite, img.PixelFormat);
+
+                            int totalBytes = img.Width * img.Height * 4;
+                            byte[] pixels = new byte[totalBytes];
+                            System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixels, 0, totalBytes);
+
+                            for (int i = 0; i < totalBytes; i += 4)
+                            {
+                                if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
+                                    pixels[i + 3] = 255;
+                            }
+                            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
+
+                            img.UnlockBits(bmpData);
+                            g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                        }
                     }
                 }
+
+                // splat 4 is a map of available water
+                string splat4 = Path.Combine(worldFolderPath, "splat4_processed.png");
+                if (!File.Exists(splat4))
+                    splat4 = Path.Combine(worldFolderPath, "splat4.png");
+                if (File.Exists(splat4))
+                {
+                    using (Bitmap img = (Bitmap)Bitmap.FromFile(splat4))
+                    {
+                        int pixelformatsize = Image.GetPixelFormatSize(img.PixelFormat);
+                        if (pixelformatsize == 32)
+                        {
+                            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+                            BitmapData bmpData = img.LockBits(rect, ImageLockMode.ReadWrite, img.PixelFormat);
+
+                            int totalBytes = img.Width * img.Height * 4;
+                            byte[] pixels = new byte[totalBytes];
+                            System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixels, 0, totalBytes);
+
+                            for (int i = 0; i < totalBytes; i += 4)
+                            {
+                                if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
+                                {
+                                    pixels[i + 3] = 50;
+                                }
+                            }
+                            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
+
+                            img.UnlockBits(bmpData);
+                            g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                        }
+                    }
+                }
+                else // try tga
+                {
+                    splat4 = Path.Combine(worldFolderPath, "splat4_processed.tga");
+                    if (File.Exists(splat4))
+                    {
+                        using (var fs = File.Open(splat4, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var bin = new BinaryReader(fs))
+                        {
+                            // Header
+                            byte id = bin.ReadByte();
+                            byte palType = bin.ReadByte();
+                            byte pixelformat = bin.ReadByte();
+                            short palStart = bin.ReadInt16();
+                            short palLength = bin.ReadInt16();
+                            byte palEntryLength = bin.ReadByte();
+                            short zeroX = bin.ReadInt16();
+                            short zeroY = bin.ReadInt16();
+                            short width = bin.ReadInt16();
+                            short height = bin.ReadInt16();
+                            byte bitsPerPixel = bin.ReadByte();
+                            byte attribute = bin.ReadByte();
+                            // only support: 32 bit uncompressed
+                            if (pixelformat == 2 && bitsPerPixel == 32)
+                            {
+                                using (Bitmap img = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                                {
+                                    int totalBytes = width * height * 4;
+                                    byte[] pixels = new byte[totalBytes];
+
+                                    for (int i = 0; i < totalBytes; i += 4)
+                                    {
+                                        pixels[i + 0] = bin.ReadByte();
+                                        pixels[i + 1] = bin.ReadByte();
+                                        pixels[i + 2] = bin.ReadByte();
+                                        pixels[i + 3] = bin.ReadByte();
+                                        if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
+                                        {
+                                            pixels[i + 3] = 50;
+                                        }
+                                    }
+                                    Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+                                    BitmapData bmpData = img.LockBits(rect, ImageLockMode.ReadWrite, img.PixelFormat);
+                                    System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
+
+                                    img.UnlockBits(bmpData);
+                                    g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                string radiation = Path.Combine(worldFolderPath, "radiation.png");
+                if (File.Exists(radiation))
+                {
+                    using (Bitmap img = (Bitmap)Bitmap.FromFile(radiation))
+                    {
+                        int pixelformatsize = Image.GetPixelFormatSize(img.PixelFormat);
+                        if (pixelformatsize == 32)
+                        {
+                            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+                            BitmapData bmpData = img.LockBits(rect, ImageLockMode.ReadWrite, img.PixelFormat);
+
+                            int totalBytes = img.Width * img.Height * 4;
+                            byte[] pixels = new byte[totalBytes];
+                            System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixels, 0, totalBytes);
+
+                            for (int i = 0; i < totalBytes; i += 4)
+                            {
+                                if (pixels[i] == 0 && pixels[i + 1] == 0 && pixels[i + 2] == 0)
+                                    pixels[i + 3] = 0;
+                                else
+                                    pixels[i + 3] = 160;
+                            }
+                            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
+
+                            img.UnlockBits(bmpData);
+                            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                            g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
+                        }
+                    }
+                }
+
             }
         }
 

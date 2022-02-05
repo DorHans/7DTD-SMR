@@ -59,7 +59,8 @@ namespace _7DTD_SingleMapRenderer.Util
                     int scale = 1;
                     var scaleNode = doc.SelectSingleNode("/MapInfo/property[@name='Scale']");
                     var scaleValueAttribute = scaleNode?.Attributes["value"]?.Value;
-                    int.TryParse(scaleValueAttribute, out scale);
+                    if (scaleValueAttribute != null)
+                        int.TryParse(scaleValueAttribute, out scale);
 
                     var heightmapNode = doc.SelectSingleNode("/MapInfo/property[@name='HeightMapSize']");
                     var valueAttribute = heightmapNode.Attributes["value"]?.Value;
