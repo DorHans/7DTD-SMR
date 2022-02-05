@@ -10,14 +10,17 @@ namespace SevenDaysSaveManipulator.PlayerData
         private const uint SUPPORTED_VERSION = 2;
         private uint version;
 
+        private uint saveFileVersion;
+
         public List<Waypoint> waypoints;
 
         public WaypointCollection()
         {
         }
 
-        internal WaypointCollection(BinaryReader reader)
+        internal WaypointCollection(BinaryReader reader, uint saveFileVersion)
         {
+            this.saveFileVersion = saveFileVersion;
             Read(reader);
         }
 
@@ -30,7 +33,7 @@ namespace SevenDaysSaveManipulator.PlayerData
             ushort waypointListLength = reader.ReadUInt16();
             for (short i = 0; i < waypointListLength; ++i)
             {
-                waypoints.Add(new Waypoint(reader, version));
+                waypoints.Add(new Waypoint(reader, version, saveFileVersion));
             }
         }
 

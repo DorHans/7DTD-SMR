@@ -138,6 +138,8 @@ namespace _7DTD_SingleMapRenderer.Core
                 {
                     var bytes = reader.ReadBytes((int)fs.Length);
 
+                    var saveFileVersion = bytes[4];
+
                     var sigscan = new Util.SignatureScanner();
                     int pos = sigscan.Find(bytes);
                     if (pos > 0)
@@ -145,7 +147,7 @@ namespace _7DTD_SingleMapRenderer.Core
                         pos -= 16; // 1 byte length prefix + 3*4 bytes coordinates + 2 bytes waypoint count + 1 byte format
                         reader.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-                        var waypointCollection = new WaypointCollection(reader);
+                        var waypointCollection = new WaypointCollection(reader, saveFileVersion);
                         foreach (var waypoint in waypointCollection.waypoints)
                         {
                             var poi = new POI(waypoint.pos.z, waypoint.pos.x, waypoint.icon, waypoint.name);
