@@ -552,7 +552,48 @@ namespace _7DTD_SingleMapRenderer.Core
                         if (!String.IsNullOrWhiteSpace(poi.Name))
                         {
                             int textOffsetY = 0; // (int)waypointFontEmSize + height / 2;
-                            g.DrawString(poi.Name, drawFont, drawBrush, x, y + textOffsetY, sf);
+                            RectangleF layoutRectangle;
+
+                            if (width > 16 && height > 16)
+                            {
+                                // The poi has some size, so try to fit the name into the rectangle.
+                                // If height and width are used directly, the name will get cropped, so try to calculate the best line width.
+                                SizeF singleLineSizeF = g.MeasureString(poi.Name, drawFont);
+                                // SizeF sizeF = g.MeasureString(poi.Name, drawFont, new SizeF(width, height), sf, out int charactersFitted, out int linesFilled);
+                                if (singleLineSizeF.Width > width)
+                                {
+                                    int singleLineWidth = (int)singleLineSizeF.Width;
+                                    int singleLineHeight = (int)singleLineSizeF.Height;
+
+                                    // height and width are biger than 16, so no need for checking for division by zero
+                                    int maxLines = (int)Math.Round((float)height / singleLineSizeF.Height);
+                                    //if (linesFilled > maxLines)
+                                    //    maxLines = linesFilled;
+
+                                    int neededLines = (int)Math.Round(singleLineSizeF.Width / (float)width);
+
+                                    if (poi.Name == "remnant_downtown_filler_16")
+                                        ;
+
+                                    if (neededLines > maxLines)
+                                        width = singleLineWidth / maxLines; //+ (int)waypointFontEmSize / 2;
+                                }
+
+                                layoutRectangle = new RectangleF(x - width / 2, y - height / 2 + textOffsetY, width, height);
+
+                                //SizeF newsizeF = g.MeasureString(poi.Name, drawFont, new SizeF(width, height), sf, out int newcharactersFitted, out int newlinesFilled);
+
+
+                                if (poi.Name == "remnant_downtown_filler_16")
+                                    ;
+
+                            }
+                            else
+                            {
+                                layoutRectangle = new RectangleF(x, y + textOffsetY, 0f, 0f);
+                            }
+
+                            g.DrawString(poi.Name, drawFont, drawBrush, layoutRectangle, sf);
                         }
                     }
                 }

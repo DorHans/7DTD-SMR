@@ -6,7 +6,7 @@
         xmlns:conv="clr-namespace:_7DTD_SingleMapRenderer.Presentation.Converters"
         xmlns:settings="clr-namespace:_7DTD_SingleMapRenderer.Settings"
         FocusManager.FocusedElement="{Binding ElementName=buttonExportAsPng}"
-        Title="7DTD - SingleMapRenderer" Height="460" Width="500">
+        Title="7DTD - SingleMapRenderer" Height="480" Width="500">
     <Window.Resources>
         <conv:InverseBooleanConverter x:Key="InverseBool"/>
         <conv:AndBooleanConverter x:Key="AndBool"/>
