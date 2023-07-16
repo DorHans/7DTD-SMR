@@ -7,7 +7,7 @@ namespace SevenDaysSaveManipulator.PlayerData
     [Serializable]
     public class WaypointCollection
     {
-        private const uint SUPPORTED_VERSION = 2;
+        private const uint SUPPORTED_VERSION = 4;
         private uint version;
 
         private uint saveFileVersion;

@@ -6,7 +6,7 @@ namespace SevenDaysSaveManipulator.PlayerData
     [Serializable]
     public class Waypoint
     {
-        public bool bTracked;
+        public bool isTracked;
         public string icon;
         public string name;
         public Vector3i pos;
@@ -16,6 +16,10 @@ namespace SevenDaysSaveManipulator.PlayerData
         uint saveFileVersion;
         private string platformId; // Alpha 20 and cross platform with Epic Games EOS
         private string userId; // Alpha 20 and cross platform with Epic Games EOS
+
+        public bool isHiddenOnCompass;
+        public bool isAutoWaypoint;
+        public bool usingLocalizationId;
 
         public Waypoint()
         {
@@ -38,7 +42,12 @@ namespace SevenDaysSaveManipulator.PlayerData
 
             icon = reader.ReadString();
             name = reader.ReadString();
-            bTracked = reader.ReadBoolean();
+            isTracked = reader.ReadBoolean();
+
+            if (version >= 3)
+            {
+                isHiddenOnCompass = reader.ReadBoolean();
+            }
 
             if (version >= 2)
             {
@@ -50,11 +59,17 @@ namespace SevenDaysSaveManipulator.PlayerData
                 {
                     if (reader.ReadBoolean())
                     {
+                        //reader.ReadByte();
                         platformId = reader.ReadString();
                         userId = reader.ReadString();
                     }
                 }
                 entityId = reader.ReadInt32();
+                if (version >= 4)
+                {
+                    isAutoWaypoint = reader.ReadBoolean();
+                    usingLocalizationId = reader.ReadBoolean();
+                }
             }
         }
 
@@ -66,7 +81,12 @@ namespace SevenDaysSaveManipulator.PlayerData
 
             writer.Write(icon);
             writer.Write(name);
-            writer.Write(bTracked);
+            writer.Write(isTracked);
+
+            if (version >= 3)
+            {
+                writer.Write(isHiddenOnCompass);
+            }
 
             if (version >= 2)
             {
@@ -89,6 +109,11 @@ namespace SevenDaysSaveManipulator.PlayerData
                     }
                 }
                 writer.Write(entityId);
+                if (version >= 4)
+                {
+                    writer.Write(isAutoWaypoint);
+                    writer.Write(usingLocalizationId);
+                }
             }
         }
     }

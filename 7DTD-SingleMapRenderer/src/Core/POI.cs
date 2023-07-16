@@ -64,9 +64,17 @@ namespace _7DTD_SingleMapRenderer.Core
             }
             else
             {
-                filename = filename.Replace('\\', '/');
-                var sri = Application.GetResourceStream(new Uri("pack://application:,,,/7DTD-SingleMapRenderer;Component/" + filename));
-                img = Image.FromStream(sri.Stream);
+                try
+                {
+                    filename = filename.Replace('\\', '/');
+                    var sri = Application.GetResourceStream(new Uri("pack://application:,,,/7DTD-SingleMapRenderer;Component/" + filename));
+                    img = Image.FromStream(sri.Stream);
+                }
+                catch
+                {
+                    var sri = Application.GetResourceStream(new Uri("pack://application:,,,/7DTD-SingleMapRenderer;Component/Resources/png/question.png"));
+                    img = Image.FromStream(sri.Stream);
+                }
             }
 
             return img;

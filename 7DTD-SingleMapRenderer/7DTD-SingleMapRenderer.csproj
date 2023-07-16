@@ -202,6 +202,7 @@
     <Resource Include="Resources\png\shield.png" />
     <Resource Include="Resources\png\star.png" />
     <Resource Include="Resources\png\tick.png" />
+    <Resource Include="Resources\png\question.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\png\map_background.png" />
