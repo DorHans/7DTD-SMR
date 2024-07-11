@@ -59,6 +59,22 @@ namespace _7DTD_SingleMapRenderer.Settings
             }
         }
 
+        private string m_GeneratedWorldsFolderPath;
+        [Option("worlds", "worlds", "Path to the folder with generated worlds", Default = "")]
+        public string GeneratedWorldsFolderPath
+        {
+            get { return m_GeneratedWorldsFolderPath; }
+            set
+            {
+                if (m_GeneratedWorldsFolderPath != value)
+                {
+                    m_GeneratedWorldsFolderPath = value;
+                    RaisePropertyChanged("GeneratedWorldsFolderPath");
+                    isDirty = true;
+                }
+            }
+        }
+
         private string m_MapFilePath;
         [Option("m", "map", "Path to the map file", Default = "")]
         public string MapFilePath

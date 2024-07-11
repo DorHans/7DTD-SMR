@@ -145,7 +145,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 this.m_OpenFileDialog.FileName = this.Settings.MapFilePath;
             }
             this.m_OpenFileDialog.DefaultExt = ".map";
-            this.m_OpenFileDialog.Filter = "Map files|*.map";
+            this.m_OpenFileDialog.Filter = "Map / Player files|*.map;*.ttp";
 
             this.m_OpenPoiFileDialog = new Microsoft.Win32.OpenFileDialog();
             if (this.Settings != null)
@@ -181,14 +181,26 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                             string[] dirs = Directory.GetDirectories(folder);
                             foreach (var dir in dirs)
                             {
-                                var files = Directory.GetFiles(dir, "*.map", SearchOption.AllDirectories);
-                                if (files.Length == 0)
+                                string mapFileName = null;
+                                if (mapFileName == null)
+                                {
+                                    var mapFiles = Directory.GetFiles(dir, "*.map", SearchOption.AllDirectories);
+                                    if (mapFiles.Length > 0)
+                                        mapFileName = mapFiles[0];
+                                }
+                                if (mapFileName == null)
+                                {
+                                    var ttpFiles = Directory.GetFiles(dir, "*.ttp", SearchOption.AllDirectories);
+                                    if (ttpFiles.Length > 0)
+                                        mapFileName = ttpFiles[0];
+                                }
+                                if (mapFileName == null)
                                     continue;
 
                                 var name = item + " - " + System.IO.Path.GetFileName(dir);
                                 SaveGame sg =
                                     savegames.FirstOrDefault(s => s.Name == name) ??
-                                    new SaveGame(name, files[0]);
+                                    new SaveGame(name, mapFileName);
                                 this.Settings.SaveGames.Add(sg);
                             }
                         }

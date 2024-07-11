@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -451,7 +453,7 @@ namespace _7DTD_SingleMapRenderer.Core
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
                 var nullpunkt = new System.Drawing.Point((-minX + 1) * tileSize, (maxY + 2) * tileSize - 1);
 
-                int regionSize = regiongridsize / 16;
+                int regionSize = 32; // WHY 32 ?? // regiongridsize / 16;
                 int regionXmin = (int)Math.Round((double)minX / regionSize);
                 int regionXmax = (int)Math.Round((double)maxX / regionSize) - 1;
                 int regionYmin = (int)Math.Round((double)minY / regionSize);
@@ -629,6 +631,9 @@ namespace _7DTD_SingleMapRenderer.Core
         /// <returns>Auflistung mit Index und zugehörigen Rohdaten.</returns>
         private static Dictionary<UInt32, byte[]> getAllTilesFromMapFile(string filename)
         {
+            if (filename.EndsWith(".ttp"))
+                return getAllTilesFromRegionMapFiles(filename);
+
             Dictionary<UInt32, byte[]> tiles = null;
 
             // Tiles aus der Datei lesen
@@ -695,5 +700,77 @@ namespace _7DTD_SingleMapRenderer.Core
 
             return ds.Data;
         }
+
+        private static readonly Regex region = new Regex(@"r\.(-?\d+)\.(-?\d+)\.7rm", RegexOptions.Compiled);
+
+        private static Dictionary<UInt32, byte[]> getAllTilesFromRegionMapFiles(string ttpFilename)
+        {
+            Dictionary<UInt32, byte[]> tiles = null;
+
+            FileInfo fileInfo = new FileInfo(ttpFilename);
+            if (!fileInfo.Exists) return tiles;
+
+            //DirectoryInfo di2 = new DirectoryInfo(Path.Combine(fileInfo.DirectoryName, Path.GetFileNameWithoutExtension(fileInfo.Name)));
+            DirectoryInfo di = new DirectoryInfo(fileInfo.FullName.Substring(0, fileInfo.FullName.Length - fileInfo.Extension.Length));
+            if (!di.Exists) return tiles;
+
+            tiles = new Dictionary<UInt32, byte[]>();
+
+            var allRegionMapFiles = di.EnumerateFiles("*.7rm");
+            foreach (var regionFile in allRegionMapFiles)
+            {
+                var match = region.Match(regionFile.Name);
+                if (!match.Success) continue;
+
+                string rxString = match.Groups[1].Value;
+                string rzString = match.Groups[2].Value;
+                int rx, rz = 0;
+                Int32.TryParse(rxString, out rx);
+                Int32.TryParse(rzString, out rz);
+                rx *= 32;
+                rz *= 32;
+
+                using (var fs = regionFile.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var zip = new GZipStream(fs, CompressionMode.Decompress))
+                {
+                    byte[] version = new byte[4];
+                    fs.Read(version, 0, 4);
+
+                    for (int i = 0; i < 32; i++)
+                    {
+                        for (int j = 0; j < 32; j++)
+                        {
+                            UInt32 tiles_index = (UInt32)(((i + rz & 0xFFFF) << 16) | (j + rx & 0xFFFF));
+                            byte[] tiles_data = new byte[512];
+
+                            int bytesRead = zip.Read(tiles_data, 0, 512);
+                            if (isFullArray(tiles_data))
+                                tiles.Add(tiles_index, tiles_data);
+                        }
+                    }
+                }
+            }
+
+            return tiles;
+        }
+
+        private static bool isEmptyArray(byte[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] != 0) return false;
+            }
+            return true;
+        }
+
+        private static bool isFullArray(byte[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] != 0) return true;
+            }
+            return false;
+        }
+
     }
 }

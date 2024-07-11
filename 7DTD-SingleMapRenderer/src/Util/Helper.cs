@@ -84,15 +84,23 @@ namespace _7DTD_SingleMapRenderer.Util
         {
             var paths = directory.Split('\\', '/').ToList();
             int firstIndex = paths.IndexOf("7DaysToDie");
-            int indexOfMapName = firstIndex + 2;
+            int indexOfMapName = paths.Count >= 3 ? paths.Count - 3 : firstIndex + 2;
 
             if (firstIndex > 0 && indexOfMapName < paths.Count)
             {
+                string mapName = paths[indexOfMapName];
+
+                string directory2 = Path.Combine(settings.GeneratedWorldsFolderPath, mapName);
+                if (Directory.Exists(directory2))
+                {
+                    return directory2;
+                }
+
                 var list = new List<string>(paths.Take(firstIndex + 1));
                 list.Add("GeneratedWorlds");
-                list.Add(paths[indexOfMapName]);
+                list.Add(mapName);
 
-                var directory2 = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), list);
+                directory2 = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), list);
                 if (Directory.Exists(directory2))
                 {
                     return directory2;

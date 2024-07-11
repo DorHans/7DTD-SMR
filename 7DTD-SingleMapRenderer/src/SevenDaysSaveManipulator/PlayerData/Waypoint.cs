@@ -10,7 +10,7 @@ namespace SevenDaysSaveManipulator.PlayerData
         public string icon;
         public string name;
         public Vector3i pos;
-        public int ownerId; // pre Alpha 20 b238
+        public int ownerId; // pre Alpha 20 b238, reappeared in Release 1.0
         public int entityId;
 
         uint saveFileVersion;
@@ -41,7 +41,23 @@ namespace SevenDaysSaveManipulator.PlayerData
             };
 
             icon = reader.ReadString();
-            name = reader.ReadString();
+
+            if (version >= 5)
+            {
+                reader.ReadByte(); // ??
+                name = reader.ReadString();
+                if (reader.ReadBoolean()) // cross platform with Epic Games EOS
+                {
+                    reader.ReadByte(); // ??
+                    platformId = reader.ReadString();
+                    userId = reader.ReadString();
+                }
+            }
+            else // Alpha 21 and before
+            {
+                name = reader.ReadString();
+            }
+
             isTracked = reader.ReadBoolean();
 
             if (version >= 3)
@@ -70,6 +86,10 @@ namespace SevenDaysSaveManipulator.PlayerData
                     isAutoWaypoint = reader.ReadBoolean();
                     usingLocalizationId = reader.ReadBoolean();
                 }
+                if (version >= 5)
+                {
+                    ownerId = reader.ReadInt32();
+                }
             }
         }
 
@@ -80,7 +100,21 @@ namespace SevenDaysSaveManipulator.PlayerData
             writer.Write(pos.z);
 
             writer.Write(icon);
-            writer.Write(name);
+
+            if (version >= 5)
+            {
+                writer.Write(true);
+                writer.Write(name);
+                writer.Write(true);
+                writer.Write(true);
+                writer.Write(platformId);
+                writer.Write(userId);
+            }
+            else
+            {
+                writer.Write(name);
+            }
+
             writer.Write(isTracked);
 
             if (version >= 3)
@@ -96,16 +130,23 @@ namespace SevenDaysSaveManipulator.PlayerData
                 }
                 else // Alpha 20 and cross platform with Epic Games EOS
                 {
-                    if (String.IsNullOrEmpty(platformId))
+                    if (version >= 5)
                     {
                         writer.Write(false);
                     }
                     else
                     {
-                        writer.Write(true);
-                        writer.Write(true);
-                        writer.Write(platformId);
-                        writer.Write(userId);
+                        if (String.IsNullOrEmpty(platformId))
+                        {
+                            writer.Write(false);
+                        }
+                        else
+                        {
+                            writer.Write(true);
+                            writer.Write(true);
+                            writer.Write(platformId);
+                            writer.Write(userId);
+                        }
                     }
                 }
                 writer.Write(entityId);
@@ -113,6 +154,10 @@ namespace SevenDaysSaveManipulator.PlayerData
                 {
                     writer.Write(isAutoWaypoint);
                     writer.Write(usingLocalizationId);
+                }
+                if (version >= 5)
+                {
+                   writer.Write(ownerId);
                 }
             }
         }

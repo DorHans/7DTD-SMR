@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using _7DTD_SingleMapRenderer.Settings;
 using Microsoft.Win32;
 
@@ -30,7 +31,7 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 }
             }
         }
-        
+
         public string GameRootPath
         {
             get { return m_settings.GameRootPath; }
@@ -44,6 +45,32 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             }
         }
 
+        public string SaveFolderPath
+        {
+            get { return m_settings.SaveFolderPath; }
+            set
+            {
+                if (m_settings.SaveFolderPath != value)
+                {
+                    m_settings.SaveFolderPath = value;
+                    RaisePropertyChanged("SaveFolderPath");
+                }
+            }
+        }
+
+
+        public string GeneratedWorldsFolderPath
+        {
+            get { return m_settings.GeneratedWorldsFolderPath; }
+            set
+            {
+                if (m_settings.GeneratedWorldsFolderPath != value)
+                {
+                    m_settings.GeneratedWorldsFolderPath = value;
+                    RaisePropertyChanged("GeneratedWorldsFolderPath");
+                }
+            }
+        }
 
         public SettingsWindow()
         {
@@ -73,9 +100,9 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             this.Close();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonGameRoot_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "7DaysToDie.exe|7DaysToDie.exe|All files (*.*)|*.*";
             openFileDialog.InitialDirectory = GameRootPath;
             var result = openFileDialog.ShowDialog();
@@ -85,7 +112,28 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
                 string directory = System.IO.Path.GetDirectoryName(filepath);
                 this.GameRootPath = directory;
             }
-            ;
+        }
+
+        private void ButtonSaveFolder_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = SaveFolderPath;
+            var result = folderBrowserDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                this.SaveFolderPath = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void ButtonWorldsFolder_Click(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = GeneratedWorldsFolderPath;
+            var result = folderBrowserDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                this.GeneratedWorldsFolderPath = folderBrowserDialog.SelectedPath;
+            }
         }
     }
 }
