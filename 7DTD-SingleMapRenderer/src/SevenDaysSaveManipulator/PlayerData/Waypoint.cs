@@ -20,6 +20,7 @@ namespace SevenDaysSaveManipulator.PlayerData
         public bool isHiddenOnCompass;
         public bool isAutoWaypoint;
         public bool usingLocalizationId;
+        public bool hiddenOnMap;
 
         public Waypoint()
         {
@@ -75,7 +76,7 @@ namespace SevenDaysSaveManipulator.PlayerData
                 {
                     if (reader.ReadBoolean())
                     {
-                        //reader.ReadByte();
+                        reader.ReadByte();
                         platformId = reader.ReadString();
                         userId = reader.ReadString();
                     }
@@ -89,6 +90,10 @@ namespace SevenDaysSaveManipulator.PlayerData
                 if (version >= 5)
                 {
                     ownerId = reader.ReadInt32();
+                }
+                if (version >= 6)
+                {
+                    hiddenOnMap = reader.ReadBoolean();
                 }
             }
         }
