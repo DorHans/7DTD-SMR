@@ -1,0 +1,43 @@
+﻿<Window x:Class="_7DTD_SingleMapRenderer.Tools.GenWorldsViewer.GeneratedWorldsViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_7DTD_SingleMapRenderer.Tools.GenWorldsViewer"
+        mc:Ignorable="d"
+        Title="GeneratedWorldsViewer" Height="450" Width="800">
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Path=StatusText}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <ListBox ItemsSource="{Binding Path=Worlds}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Grid.Row="0" Source="{Binding Path=Preview}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Path=Name}" 
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>

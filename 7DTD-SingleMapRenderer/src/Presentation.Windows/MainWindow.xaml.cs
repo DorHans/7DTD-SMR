@@ -503,6 +503,24 @@ namespace _7DTD_SingleMapRenderer.Presentation.Windows
             wnd.Show();
         }
 
+        private void menuGeneratedWorldsViewer_Click(object sender, RoutedEventArgs e)
+        {
+            var childs = this.OwnedWindows.OfType<_7DTD_SingleMapRenderer.Tools.GenWorldsViewer.GeneratedWorldsViewer>();
+            if (childs.Count() > 0)
+            {
+                var wnd = childs.First();
+                if (wnd.WindowState == WindowState.Minimized)
+                    wnd.WindowState = WindowState.Normal;
+                wnd.Focus();
+            }
+            else
+            {
+                var wnd = new _7DTD_SingleMapRenderer.Tools.GenWorldsViewer.GeneratedWorldsViewer();
+                wnd.Owner = this;
+                wnd.Show();
+            }
+        }
+
         #endregion
 
     }

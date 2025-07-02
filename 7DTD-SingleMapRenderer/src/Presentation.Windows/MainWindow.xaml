@@ -43,6 +43,7 @@
                 <MenuItem Header="XML to CSV Converter" Click="buttonXmlCsvConverter_Click"/>
                 <MenuItem Header="Item atlas splitter" Click="buttonItemAtlasSplitter_Click"/>
                 <MenuItem Header="_Region Viewer" Click="menuRegionViewer_Click"/>
+                <MenuItem Header="_GeneratedWorlds Viewer" Click="menuGeneratedWorldsViewer_Click"/>
             </MenuItem>
             <Separator Visibility="Hidden"/>
         </Menu>
@@ -109,10 +110,12 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Tile size: " />
                     <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Source={StaticResource TileSizesValues}}"
                               SelectedItem="{Binding Settings.SelectedTileSize}"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Content="Render Tiles" IsChecked="{Binding Settings.RenderTiles}"
+                              ToolTip="Turn on, if you want your ingame map. Turn off, if you want just the biomes."/>
                     <CheckBox Grid.Row="0" Grid.Column="4" VerticalAlignment="Center" Content="Draw background" IsChecked="{Binding Settings.RenderBackground}"
                               ToolTip="Draws the 'old' in-game background."/>
                     <CheckBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" Content="Draw biome map" IsChecked="{Binding Settings.RenderBiomeMap}"
-                              ToolTip="Draws the biome map as background. Has priority over 'Draw background'."/>
+                              ToolTip="Draws the biome map as background."/>
 
                 </Grid>
             </GroupBox>

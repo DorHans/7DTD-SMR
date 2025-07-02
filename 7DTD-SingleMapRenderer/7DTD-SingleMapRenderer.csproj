@@ -87,6 +87,10 @@
     <Compile Include="src\Presentation.Converters\AndBooleanConverter.cs" />
     <Compile Include="src\CommandLine\CommandLine.cs" />
     <Compile Include="src\Presentation.Converters\InverseBooleanConverter.cs" />
+    <Compile Include="src\Tools.GenWorldsViewer\GeneratedWorld.cs" />
+    <Compile Include="src\Tools.GenWorldsViewer\GeneratedWorldsViewerWindow.xaml.cs">
+      <DependentUpon>GeneratedWorldsViewerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Tools.RegionViewer\ChunkViewModel.cs" />
     <Compile Include="src\Tools.RegionViewer\RegionFileViewModel.cs" />
     <Compile Include="src\Tools.RegionViewer\RegionViewer.xaml.cs">
@@ -135,6 +139,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="src\Presentation.Windows\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\Tools.GenWorldsViewer\GeneratedWorldsViewerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

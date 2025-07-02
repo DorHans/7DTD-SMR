@@ -96,25 +96,35 @@ namespace _7DTD_SingleMapRenderer.Core
             // Tiles wieder zusammensetzen
             using (Bitmap big_tile = new Bitmap(sizeX, sizeY, System.Drawing.Imaging.PixelFormat.Format16bppRgb555))
             {
-                if (m_Settings.RenderBiomeMap)
-                {
-                    if (progress != null)
-                        progress.Report("Rendering biome map . . .");
-                    renderBiomeMap(big_tile, worldFolderPath);
-                }
-                else if (m_Settings.RenderBackground)
+                if (m_Settings.RenderBackground)
                 {
                     if (progress != null)
                         progress.Report("Rendering background . . .");
                     renderBackgroundTo(big_tile);
                 }
+                if (m_Settings.RenderBiomeMap)
+                {
+                    if (progress != null)
+                        progress.Report("Rendering biomes, streets and water . . .");
 
-                if (progress != null)
-                    progress.Report("Rendering map tiles . . .");
-                if (tileSize == 16)
-                    renderTilesOptimized(big_tile, tiles, minX, maxX, minY, maxY);
-                else
-                    renderTiles(big_tile, tiles, maxY, minX);
+                    byte alpha = 224;
+                    if (m_Settings.RenderBackground)
+                        alpha = 160;
+                    if (m_Settings.RenderTiles)
+                        alpha = 128;
+
+                    renderBiomeMap(big_tile, worldFolderPath, alpha);
+                }
+
+                if (m_Settings.RenderTiles)
+                {
+                    if (progress != null)
+                        progress.Report("Rendering map tiles . . .");
+                    if (tileSize == 16)
+                        renderTilesOptimized(big_tile, tiles, minX, maxX, minY, maxY);
+                    else
+                        renderTiles(big_tile, tiles, maxY, minX);
+                }
 
                 if (m_Settings.RenderGrid)
                 {
@@ -157,6 +167,8 @@ namespace _7DTD_SingleMapRenderer.Core
             int tileSize = (int)m_Settings.SelectedTileSize;
             using (Graphics g = Graphics.FromImage(big_tile))
             {
+                // with default interpolation you get halftransparent edges around each tile
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
                 foreach (var tile in tiles)
                 {
                     int x = (Int16)(tile.Key & 0xFFFF);
@@ -221,7 +233,7 @@ namespace _7DTD_SingleMapRenderer.Core
             }
         }
 
-        private void renderBiomeMap(Bitmap big_tile, string worldFolderPath)
+        private void renderBiomeMap(Bitmap big_tile, string worldFolderPath, byte alpha = 127)
         {
             if (String.IsNullOrEmpty(worldFolderPath))
                 return;
@@ -233,12 +245,27 @@ namespace _7DTD_SingleMapRenderer.Core
                 string biomeMap = Path.Combine(worldFolderPath, "biomes.png");
                 if (File.Exists(biomeMap))
                 {
-                    using (Image img = Image.FromFile(biomeMap))
+                    using (Bitmap img = (Bitmap)Bitmap.FromFile(biomeMap))
                     {
+                        Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+                        BitmapData bmpData = img.LockBits(rect, ImageLockMode.ReadWrite, img.PixelFormat);
+
+                        int totalBytes = img.Width * img.Height * 4;
+                        byte[] pixels = new byte[totalBytes];
+                        System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, pixels, 0, totalBytes);
+
+                        for (int i = 0; i < totalBytes; i += 4)
+                        {
+                            // if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
+                            pixels[i + 3] = alpha;
+                        }
+                        System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
+                        img.UnlockBits(bmpData);
                         g.DrawImage(img, 0.0f, 0.0f, big_tile.Width, big_tile.Height);
                     }
                 }
 
+                // splat 3 contains roads
                 string splat3 = Path.Combine(worldFolderPath, "splat3_processed.png");
                 if (!File.Exists(splat3))
                     splat3 = Path.Combine(worldFolderPath, "splat3.png");
@@ -259,7 +286,7 @@ namespace _7DTD_SingleMapRenderer.Core
                             for (int i = 0; i < totalBytes; i += 4)
                             {
                                 if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
-                                    pixels[i + 3] = 255;
+                                    pixels[i + 3] = alpha;
                             }
                             System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
 
@@ -291,7 +318,11 @@ namespace _7DTD_SingleMapRenderer.Core
                             {
                                 if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
                                 {
-                                    pixels[i + 3] = 50;
+                                    pixels[i + 3] = alpha;
+                                    // switch channels B <> G
+                                    pixels[i] ^= pixels[i + 1];
+                                    pixels[i + 1] ^= pixels[i];
+                                    pixels[i] ^= pixels[i + 1];
                                 }
                             }
                             System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpData.Scan0, totalBytes);
@@ -338,7 +369,11 @@ namespace _7DTD_SingleMapRenderer.Core
                                         pixels[i + 3] = bin.ReadByte();
                                         if (pixels[i] != 0 || pixels[i + 1] != 0 || pixels[i + 2] != 0)
                                         {
-                                            pixels[i + 3] = 50;
+                                            pixels[i + 3] = alpha;
+                                            // switch channels B <> G
+                                            pixels[i] ^= pixels[i + 1];
+                                            pixels[i + 1] ^= pixels[i];
+                                            pixels[i] ^= pixels[i + 1];
                                         }
                                     }
                                     Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);

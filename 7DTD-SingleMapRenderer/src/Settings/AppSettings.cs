@@ -159,7 +159,7 @@ namespace _7DTD_SingleMapRenderer.Settings
 
         private bool m_RenderBiomeMap;
         [XmlElement("RenderBiomeMap")]
-        [Option("bm", "biomemap", "Draws the biome map as background. Has priority over switch \"background\".", Default = false)]
+        [Option("bm", "biomemap", "Draws the biome map as background.", Default = false)]
         public bool RenderBiomeMap
         {
             get { return m_RenderBiomeMap; }
@@ -169,6 +169,23 @@ namespace _7DTD_SingleMapRenderer.Settings
                 {
                     m_RenderBiomeMap = value;
                     RaisePropertyChanged("RenderBiomeMap");
+                    isDirty = true;
+                }
+            }
+        }
+
+        private bool m_RenderTiles;
+        [XmlElement("RenderTiles")]
+        [Option("", "tiles", "Renders the tiles.", Default = true)]
+        public bool RenderTiles
+        {
+            get { return m_RenderTiles; }
+            set
+            {
+                if (m_RenderTiles != value)
+                {
+                    m_RenderTiles = value;
+                    RaisePropertyChanged("RenderTiles");
                     isDirty = true;
                 }
             }
